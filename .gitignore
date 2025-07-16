@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.local
+ZET-debug.log
+app/
+dist/
+node_modules
+node_modules/
+npm-debug.log*
+yarn-debug.log* 
+arn-error.log*
+yarn.lock
+package-lock.json
