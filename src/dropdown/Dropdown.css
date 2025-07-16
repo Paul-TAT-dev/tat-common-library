@@ -1,0 +1,17 @@
+.search {
+  position: absolute;
+  top: 15%;
+  right: 1rem;
+}
+
+.menu {
+  width: 100%;
+}
+
+#search {
+  position: relative;
+}
+
+.menu-options {
+  max-height: 150px;
+}
