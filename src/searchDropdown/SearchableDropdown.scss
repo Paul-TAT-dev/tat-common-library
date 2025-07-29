@@ -19,12 +19,10 @@
   border: none;
   outline: none;
   flex: 1;
-  font-size: 14px;
   background: transparent;
 }
 
 .caret {
-  font-size: 12px;
   margin-left: 8px;
 }
 
@@ -47,7 +45,10 @@
   border: none;
   border-bottom: 1px solid #eee;
   box-sizing: border-box;
-  font-size: 14px;
+
+  &::placeholder {
+    color: #d3d3d3;
+  }
 }
 
 .search-dropdown-options {
@@ -69,8 +70,19 @@
 .search-clear-button {
   background: none;
   border: none;
-  font-size: 16px;
   cursor: pointer;
   margin-left: 4px;
   color: #666;
+}
+
+.search-loading {
+  width: 100%;
+  color: #d3d3d3;
+  padding-left: 2px;
+}
+
+.search-selected-value {
+  &::placeholder {
+    color: #d3d3d3;
+  }
 }

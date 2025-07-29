@@ -1,5 +1,4 @@
-import { Checkbox } from './checkbox';
-import { Input } from './input';
-import { Select } from './select';
+import { Checkbox } from "./checkbox";
+import { Input } from "./input";
 
-export { Checkbox, Input, Select };
+export { Checkbox, Input };

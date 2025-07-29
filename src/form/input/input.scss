@@ -1,0 +1,9 @@
+.form-floating-sm {
+  zoom: 90%;
+}
+
+.form-control {
+  &::placeholder {
+    color: #d3d3d3;
+  }
+}

@@ -1,6 +1,6 @@
-import { ChangeEvent, FC, memo } from 'react';
+import { ChangeEvent, FC, memo } from "react";
 
-import './input.css';
+import "./input.scss";
 
 interface InputProps {
   id: string;

@@ -39,7 +39,7 @@ const SearchableDropdown: React.FC<Props> = ({
     opt.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleDropdown = () => setIsOpen((prev) => !prev);
+  const toggleDropdown = () => !isLoading && setIsOpen((prev) => !prev);
 
   useEffect(() => {
     if (value) {
@@ -87,7 +87,7 @@ const SearchableDropdown: React.FC<Props> = ({
         tabIndex={0}
       >
         {isLoading ? (
-          <span className="w-100 text-secondary">
+          <span className="search-loading">
             {loadingMessage || "Loading..."}
           </span>
         ) : (
