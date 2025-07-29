@@ -22,6 +22,11 @@ jobs:
       - name: Build Storybook
         run: yarn storybook:build
 
+      - name: Debug GitHub Context
+        run: |
+          echo "Actor: $GITHUB_ACTOR"
+          echo "Repository: $GITHUB_REPOSITORY"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
