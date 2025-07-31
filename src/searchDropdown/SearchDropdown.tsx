@@ -106,14 +106,16 @@ const SearchableDropdown: React.FC<Props> = ({
       </div>
       {isOpen && (
         <div className="search-dropdown-menu">
-          <input
-            type="text"
-            className="search-dropdown-search"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
-          />
+          <div className="search-selected-wrapper">
+            <input
+              type="text"
+              className="search-dropdown-search"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoFocus
+            />
+          </div>
           <ul className="search-dropdown-options">
             {filteredOptions.length === 0 && (
               <li>{noDataMessage || "No matches found"}</li>
