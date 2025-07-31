@@ -7,6 +7,9 @@
     padding: 10px;
     border: none;
     border-radius: 4px;
+    &::placeholder {
+      color: #d3d3d3;
+    }
   }
   .tat-input-label {
     position: absolute;
