@@ -12,16 +12,17 @@ interface InputProps {
 
 const Input: FC<InputProps> = ({ id, value, placeholder, label, onChange }) => {
   return (
-    <div className="form-floating-sm form-floating mb-3">
+    <div className="tat-input-wrapper mb-3">
+      <label className="tat-input-label" htmlFor={id}>
+        {label}
+      </label>
       <input
         type="text"
         value={value}
-        className="form-control"
         id={id}
         placeholder={placeholder}
         onChange={onChange}
       />
-      <label htmlFor={id}>{label}</label>
     </div>
   );
 };

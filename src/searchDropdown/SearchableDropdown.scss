@@ -12,10 +12,15 @@
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 4px;
-  cursor: text;
   background: white;
+  cursor: text;
   &:hover {
     border-color: #999;
+  }
+  &.active {
+    border-color: #005fcc;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 }
 
@@ -77,9 +82,9 @@
 .search-clear-button {
   background: none;
   border: none;
-  cursor: pointer;
   margin-left: 4px;
   color: #666;
+  cursor: pointer;
 }
 
 .search-loading {

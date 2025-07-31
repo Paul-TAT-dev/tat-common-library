@@ -1,9 +1,22 @@
-.form-floating-sm {
-  zoom: 90%;
-}
-
-.form-control {
-  &::placeholder {
-    color: #d3d3d3;
+.tat-input-wrapper {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+  }
+  .tat-input-label {
+    position: absolute;
+    padding: 0 5px;
+    font-size: 10px;
+    background: white;
+    top: -8px;
+    left: 5px;
+  }
+  &:hover {
+    border-color: #999;
   }
 }

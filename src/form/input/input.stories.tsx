@@ -14,7 +14,7 @@ export const Default: Story = {
     id: "Input",
     value: "",
     placeholder: "-- Placeholder --",
-    label: "Input",
+    label: "Input label here",
     onChange: () => {},
   },
 };

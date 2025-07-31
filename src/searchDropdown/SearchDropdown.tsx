@@ -82,7 +82,7 @@ const SearchableDropdown: React.FC<Props> = ({
       ref={wrapperRef}
     >
       <div
-        className="search-dropdown-input"
+        className={`${isOpen ? "active" : ""} search-dropdown-input`}
         onClick={toggleDropdown}
         tabIndex={0}
       >
