@@ -42,10 +42,8 @@ const SearchableDropdown: React.FC<Props> = ({
   const toggleDropdown = () => !isLoading && setIsOpen((prev) => !prev);
 
   useEffect(() => {
-    if (value) {
-      const item = options.find((opt) => opt.id === value);
-      setSelected(item || null);
-    }
+    const item = options.find((opt) => opt.id === value);
+    setSelected(item || null);
   }, [value]);
 
   const selectOption = (option: itemType) => {
