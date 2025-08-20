@@ -1,44 +1,51 @@
-import { X } from 'lucide-react';
-import { FC, memo, ReactNode } from 'react';
-import Modal from 'react-modal';
+import { X } from "lucide-react";
+import { FC, memo, ReactNode } from "react";
+import Modal from "react-modal";
 
-import './ModalComponent.css';
+import "./ModalComponent.css";
 
 interface ModalComponentProps {
   modalIsOpen: boolean;
   afterOpenModal?: Modal.OnAfterOpenCallback;
   title?: string;
+  customTitle?: ReactNode;
   closeModal: () => void;
   height?: string;
   width?: string;
   content?: ReactNode;
+  zIndex?: string;
 }
 
 const ModalComponent: FC<ModalComponentProps> = ({
   modalIsOpen,
   afterOpenModal,
-  title = '',
+  title = "",
+  customTitle,
   closeModal,
-  height = '90%',
-  width = '90%',
-  content
+  height = "90%",
+  width = "90%",
+  content,
+  zIndex = 2,
 }) => {
   const customStyles = {
+    overlay: {
+      zIndex,
+    },
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
       width,
       height,
-      padding: '20px',
-      borderRadius: '8px',
-      border: '1px solid #ccc',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      overflow: 'hidden'
-    }
+      padding: "20px",
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      overflow: "hidden",
+    },
   };
   return (
     <Modal
@@ -50,7 +57,7 @@ const ModalComponent: FC<ModalComponentProps> = ({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h3 className="modal-title">{title}</h3>
+          {customTitle ? customTitle : <h3 className="modal-title">{title}</h3>}
           <span className="close">
             <X onClick={closeModal} />
           </span>

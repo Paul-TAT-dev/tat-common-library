@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import "./SearchableDropdown.scss";
 
@@ -35,8 +35,12 @@ const SearchableDropdown: React.FC<Props> = ({
   const [selected, setSelected] = useState<itemType | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = options.filter((opt) =>
-    opt.label.toLowerCase().includes(search.toLowerCase())
+  const filteredOptions = useMemo(
+    () =>
+      options.filter((opt) =>
+        opt.label.toLowerCase().includes(search.toLowerCase())
+      ),
+    [search]
   );
 
   const toggleDropdown = () => !isLoading && setIsOpen((prev) => !prev);
