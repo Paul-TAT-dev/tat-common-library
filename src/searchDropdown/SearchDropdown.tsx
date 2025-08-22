@@ -1,8 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import "./SearchableDropdown.scss";
-
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useDebounce } from "use-debounce";
 
 export interface itemType {
   id: string;
@@ -14,7 +19,7 @@ interface Props {
   value: string;
   options: itemType[];
   placeholder?: string;
-  onChange: (id: string, value: itemType) => void;
+  onChange: (id: string, value: itemType | null) => void;
   noDataMessage?: string;
   isLoading?: boolean;
   loadingMessage?: string;
@@ -35,47 +40,74 @@ const SearchableDropdown: React.FC<Props> = ({
   const [selected, setSelected] = useState<itemType | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = useMemo(
-    () =>
-      options.filter((opt) =>
-        opt.label.toLowerCase().includes(search.toLowerCase())
-      ),
-    [search]
+  const [debouncedSearch] = useDebounce(search, 300);
+
+  // ✅ Deduplicate options once
+  const uniqueOptions = useMemo(() => {
+    const seen = new Map<string, itemType>();
+    options.forEach((opt) => {
+      if (!seen.has(opt.id)) seen.set(opt.id, opt);
+    });
+    return Array.from(seen.values());
+  }, [options]);
+
+  // ✅ Filter efficiently (O(n))
+  const filteredOptions = useMemo(() => {
+    if (!debouncedSearch) return uniqueOptions;
+    const lower = debouncedSearch.toLowerCase();
+    return uniqueOptions.filter((opt) =>
+      opt.label.toLowerCase().includes(lower)
+    );
+  }, [uniqueOptions, debouncedSearch]);
+
+  const toggleDropdown = useCallback(() => {
+    if (!isLoading) setIsOpen((prev) => !prev);
+  }, [isLoading]);
+
+  // ✅ Keep selection in sync with external `value`
+  useEffect(() => {
+    if (!value) {
+      setSelected(null);
+    } else {
+      const item = uniqueOptions.find((opt) => opt.id === value);
+      setSelected(item || null);
+    }
+  }, [value, uniqueOptions]);
+
+  const selectOption = useCallback(
+    (option: itemType) => {
+      setSelected(option);
+      setIsOpen(false);
+      setSearch("");
+      onChange?.(id, option);
+    },
+    [id, onChange]
   );
 
-  const toggleDropdown = () => !isLoading && setIsOpen((prev) => !prev);
+  const clearSelection = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setSelected(null);
+      setSearch("");
+      onChange?.(id, null);
+    },
+    [id, onChange]
+  );
 
-  useEffect(() => {
-    const item = options.find((opt) => opt.id === value);
-    setSelected(item || null);
-  }, [value]);
-
-  const selectOption = (option: itemType) => {
-    setSelected(option);
-    setIsOpen(false);
-    setSearch("");
-    onChange && onChange(id, option);
-  };
-
-  const clearSelection = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelected(null);
-    setSearch("");
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
+  // ✅ Lightweight outside click listener
+  const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       wrapperRef.current &&
       !wrapperRef.current.contains(event.target as Node)
     ) {
       setIsOpen(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [handleClickOutside]);
 
   return (
     <div
@@ -106,6 +138,7 @@ const SearchableDropdown: React.FC<Props> = ({
           {isOpen ? <ChevronUp height="16px" /> : <ChevronDown height="16px" />}
         </span>
       </div>
+
       {isOpen && (
         <div className="search-dropdown-menu">
           <div className="search-selected-wrapper">
@@ -118,15 +151,17 @@ const SearchableDropdown: React.FC<Props> = ({
               autoFocus
             />
           </div>
+
           <ul className="search-dropdown-options">
-            {filteredOptions.length === 0 && (
+            {filteredOptions.length === 0 ? (
               <li>{noDataMessage || "No matches found"}</li>
+            ) : (
+              filteredOptions.map((opt) => (
+                <li key={opt.id} onClick={() => selectOption(opt)}>
+                  {opt.label}
+                </li>
+              ))
             )}
-            {filteredOptions.map((opt) => (
-              <li key={opt.id} onClick={() => selectOption(opt)}>
-                {opt.label}
-              </li>
-            ))}
           </ul>
         </div>
       )}
