@@ -8,9 +8,18 @@ interface InputProps {
   placeholder: string;
   label: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const Input: FC<InputProps> = ({ id, value, placeholder, label, onChange }) => {
+const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
+  id,
+  value,
+  placeholder,
+  label,
+  onChange,
+  onKeyDown,
+  ...props
+}) => {
   return (
     <div className="tat-input-wrapper mb-3">
       <label className="tat-input-label" htmlFor={id}>
@@ -22,6 +31,8 @@ const Input: FC<InputProps> = ({ id, value, placeholder, label, onChange }) => {
         id={id}
         placeholder={placeholder}
         onChange={onChange}
+        onKeyDown={onKeyDown}
+        {...props}
       />
     </div>
   );

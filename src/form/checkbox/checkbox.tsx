@@ -1,6 +1,6 @@
-import { ChangeEvent, FC, memo } from 'react';
+import { ChangeEvent, FC, memo } from "react";
 
-import './checkbox.css';
+import "./checkbox.css";
 
 interface CheckboxProps {
   id: string;
@@ -9,7 +9,9 @@ interface CheckboxProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Checkbox: FC<CheckboxProps> = ({ id, label, isChecked, onChange }) => {
+const Checkbox: FC<
+  CheckboxProps & React.InputHTMLAttributes<HTMLInputElement>
+> = ({ id, label, isChecked, onChange, ...props }) => {
   return (
     <div className="form-floating-sm form-check mb-3">
       <input
@@ -18,6 +20,7 @@ const Checkbox: FC<CheckboxProps> = ({ id, label, isChecked, onChange }) => {
         id={id}
         checked={isChecked}
         onChange={onChange}
+        {...props}
       />
       <label className="form-check-label" htmlFor={id}>
         {label}
