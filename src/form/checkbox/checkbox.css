@@ -6,3 +6,11 @@
 .form-check-label {
   cursor: pointer;
 }
+
+.form-check-input {
+  border: #999 1px solid;
+
+  &:hover {
+    border: #666 1px solid;
+  }
+}

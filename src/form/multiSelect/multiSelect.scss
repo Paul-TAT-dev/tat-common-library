@@ -1,0 +1,120 @@
+.multi-select-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+  cursor: text;
+}
+
+.multi-select-default {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 4px;
+  background: white;
+  min-height: 44px;
+  cursor: text;
+
+  &:hover {
+    border-color: #999;
+  }
+
+  &.active {
+    border-color: #005fcc;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .multi-select-placeholder {
+    color: #d4d4d4;
+  }
+}
+
+.multi-select-input {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.multi-select-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  padding: 0rem 0.5rem 0rem 0rem;
+  font-size: 0.875rem;
+  border: 1px solid #1d4ed8;
+  border-radius: 8px;
+  cursor: default;
+
+  .chip-remove {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: #ef4444;
+
+    &:hover {
+      color: #b91c1c;
+    }
+  }
+}
+
+.multi-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-top: none;
+  background: white;
+  z-index: 10;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .multi-select-search {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #d3d3d3;
+    }
+  }
+
+  .multi-select-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 150px;
+    overflow-y: auto;
+
+    li {
+      padding: 10px;
+      cursor: pointer;
+
+      &:hover {
+        background: #f0f0f0;
+      }
+    }
+
+    .empty {
+      padding: 10px;
+      color: #6b7280;
+      font-style: italic;
+    }
+  }
+}
+
+.tat-input-label {
+  position: absolute;
+  padding: 0 5px;
+  font-size: 10px;
+  background: white;
+  top: -8px;
+  left: 5px;
+}
