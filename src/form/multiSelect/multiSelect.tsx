@@ -1,49 +1,44 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+  KeyboardEvent,
+} from "react";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
-
 import "./multiSelect.scss";
 
-interface OptionObject {
+export interface OptionObject {
   id: string;
   label: string;
 }
 
-type ValueType = string[] | OptionObject[];
-type OptionsType = string[] | OptionObject[];
-
-interface InputProps {
+// 🔑 Dynamic Props: options and value must match type T
+type MultiSelectInputProps<T extends string | OptionObject> = {
   id: string;
-  value: ValueType;
+  value: T[]; // value type depends on options
   placeholder?: string;
   label?: string;
-  options: OptionsType;
-  onChange: (value: ValueType) => void;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-}
+  options: T[]; // options and value must match
+  onChange: (value: T[]) => void;
+};
 
-const MultiSelectInput: FC<InputProps> = ({
+function MultiSelectInput<T extends string | OptionObject>({
   id,
   value,
   placeholder = "-- Select options --",
   label,
   options,
   onChange,
-  onKeyDown,
-  ...props
-}) => {
+}: MultiSelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
-  const [showInput, setShowInput] = useState(true);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const isObjectMode =
-    Array.isArray(options) &&
-    options.length > 0 &&
-    typeof options[0] === "object";
+  const isObjectMode = typeof options[0] === "object";
 
-  const selected = value as any[];
-
-  // ✅ Outside click handler
+  // ✅ Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -52,49 +47,68 @@ const MultiSelectInput: FC<InputProps> = ({
       ) {
         setIsOpen(false);
         setFilter("");
-        if (selected.length > 0) setShowInput(false);
-      } else {
-        setShowInput(true);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [selected]);
+  }, []);
 
-  const handleSelect = (option: any) => {
-    const exists = selected.some((val) =>
-      isObjectMode ? val.id === option.id : val === option
-    );
-    if (exists) return;
-    onChange([...selected, option]);
-    setFilter("");
-    setShowInput(true);
-  };
+  // ✅ Add option
+  const handleSelect = useCallback(
+    (option: T) => {
+      const exists = value.some((val) =>
+        isObjectMode
+          ? (val as OptionObject).id === (option as OptionObject).id
+          : val === option
+      );
+      if (exists) return;
+      onChange([...value, option]);
+      setFilter("");
+    },
+    [value, onChange, isObjectMode]
+  );
 
-  const handleRemove = (option: any) => {
-    const newValue = selected.filter((val) =>
-      isObjectMode ? val.id !== option.id : val !== option
-    );
-    onChange(newValue);
-    if (newValue.length === 0) setShowInput(true);
-  };
+  // ✅ Remove option
+  const handleRemove = useCallback(
+    (option: T) => {
+      const newValue = value.filter((val) =>
+        isObjectMode
+          ? (val as OptionObject).id !== (option as OptionObject).id
+          : val !== option
+      );
+      onChange(newValue);
+    },
+    [value, onChange, isObjectMode]
+  );
 
   // ✅ Filtered options
-  const filteredOptions = (options as any[])
-    .filter((opt) =>
-      isObjectMode
-        ? !selected.some((sel) => sel.id === opt.id)
-        : !selected.includes(opt)
-    )
-    .filter((opt) => {
-      const label = isObjectMode
-        ? (opt as OptionObject).label
-        : (opt as string);
-      return label.toLowerCase().includes(filter.toLowerCase());
-    });
+  const filteredOptions = useMemo(() => {
+    return options
+      .filter((opt) =>
+        isObjectMode
+          ? !value.some(
+              (sel) => (sel as OptionObject).id === (opt as OptionObject).id
+            )
+          : !value.includes(opt as T)
+      )
+      .filter((opt) => {
+        const label = isObjectMode
+          ? (opt as OptionObject).label
+          : (opt as string);
+        return label.toLowerCase().includes(filter.toLowerCase());
+      });
+  }, [options, value, filter, isObjectMode]);
+
+  // ✅ Keyboard shortcuts
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") setIsOpen(false);
+    if (e.key === "Enter" && filteredOptions.length > 0) {
+      handleSelect(filteredOptions[0]);
+    }
+  };
 
   return (
-    <div className="multi-select-wrapper mb-3" ref={wrapperRef}>
+    <div className="multi-select-wrapper" ref={wrapperRef}>
       {label && (
         <label className="tat-input-label" htmlFor={id}>
           {label}
@@ -103,23 +117,19 @@ const MultiSelectInput: FC<InputProps> = ({
 
       <div
         className={`multi-select-default ${isOpen ? "active" : ""}`}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
-        {selected.length > 0 && (
+        {value.length > 0 && (
           <div className="multi-select-input">
-            {selected.map((item, index) => {
+            {value.map((item, index) => {
               const displayLabel = isObjectMode
                 ? (item as OptionObject).label
                 : (item as string);
+              const key = isObjectMode
+                ? (item as OptionObject).id
+                : `${item}-${index}`;
               return (
-                <span
-                  key={
-                    isObjectMode
-                      ? (item as OptionObject).id
-                      : `${item}-${index}`
-                  }
-                  className="multi-select-chip"
-                >
+                <span key={key} className="multi-select-chip">
                   <X
                     height="14px"
                     onClick={(e) => {
@@ -135,16 +145,13 @@ const MultiSelectInput: FC<InputProps> = ({
           </div>
         )}
 
-        {showInput && (
-          <span className="multi-select-placeholder">
-            {selected.length > 0 ? "" : placeholder}
-          </span>
+        {value.length === 0 && (
+          <span className="multi-select-placeholder">{placeholder}</span>
         )}
-        {showInput && (
-          <span className="caret">
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </span>
-        )}
+
+        <span className="caret">
+          {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </span>
       </div>
 
       {isOpen && (
@@ -156,6 +163,7 @@ const MultiSelectInput: FC<InputProps> = ({
               placeholder="Search..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
+              onKeyDown={handleKeyDown}
               autoFocus
             />
           </div>
@@ -167,7 +175,7 @@ const MultiSelectInput: FC<InputProps> = ({
                   : (opt as string);
                 const key = isObjectMode
                   ? (opt as OptionObject).id
-                  : `${opt}-${index}`;
+                  : `${opt as string}-${index}`;
                 return (
                   <li key={key} onClick={() => handleSelect(opt)}>
                     {displayLabel}
@@ -182,6 +190,6 @@ const MultiSelectInput: FC<InputProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default MultiSelectInput;

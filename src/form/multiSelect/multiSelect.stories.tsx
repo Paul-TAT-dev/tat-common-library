@@ -18,6 +18,7 @@ const StatefulWrapper = (args: any) => {
     <MultiSelectInput
       {...args}
       value={value}
+      placeholder="Select..."
       onChange={(val) => setValue(val)} // ✅ direct value now
     />
   );
