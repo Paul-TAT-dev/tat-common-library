@@ -23,6 +23,7 @@ interface Props {
   noDataMessage?: string;
   isLoading?: boolean;
   loadingMessage?: string;
+  hide?: boolean;
 }
 
 const SearchableDropdown: React.FC<Props> = ({
@@ -34,6 +35,7 @@ const SearchableDropdown: React.FC<Props> = ({
   noDataMessage,
   isLoading,
   loadingMessage,
+  hide,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -112,7 +114,9 @@ const SearchableDropdown: React.FC<Props> = ({
   return (
     <div
       id={id}
-      className="search-dropdown-wrapper col-12 col-md-12 col-sm-12"
+      className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
+        hide ? "d-none" : ""
+      }`}
       ref={wrapperRef}
     >
       <div

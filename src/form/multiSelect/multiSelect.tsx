@@ -22,6 +22,7 @@ type MultiSelectInputProps<T extends string | OptionObject> = {
   label?: string;
   options: T[]; // options and value must match
   onChange: (value: T[]) => void;
+  hide?: boolean;
 };
 
 function MultiSelectInput<T extends string | OptionObject>({
@@ -31,6 +32,7 @@ function MultiSelectInput<T extends string | OptionObject>({
   label,
   options,
   onChange,
+  hide,
 }: MultiSelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
@@ -108,7 +110,10 @@ function MultiSelectInput<T extends string | OptionObject>({
   };
 
   return (
-    <div className="multi-select-wrapper" ref={wrapperRef}>
+    <div
+      className={`multi-select-wrapper ${hide ? "d-none" : ""}`}
+      ref={wrapperRef}
+    >
       {label && (
         <label className="tat-input-label" htmlFor={id}>
           {label}
