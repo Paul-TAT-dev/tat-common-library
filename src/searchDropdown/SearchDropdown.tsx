@@ -19,11 +19,14 @@ interface Props {
   value: string;
   options: itemType[];
   placeholder?: string;
+  label: string;
   onChange: (id: string, value: itemType | null) => void;
   noDataMessage?: string;
   isLoading?: boolean;
   loadingMessage?: string;
   hide?: boolean;
+  disabled?: boolean;
+  required?: boolean;
 }
 
 const SearchableDropdown: React.FC<Props> = ({
@@ -31,11 +34,14 @@ const SearchableDropdown: React.FC<Props> = ({
   value,
   options,
   placeholder = "-- Select an option --",
+  label,
   onChange,
   noDataMessage,
   isLoading,
   loadingMessage,
   hide,
+  disabled = false,
+  required = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -63,7 +69,7 @@ const SearchableDropdown: React.FC<Props> = ({
   }, [uniqueOptions, debouncedSearch]);
 
   const toggleDropdown = useCallback(() => {
-    if (!isLoading) setIsOpen((prev) => !prev);
+    if (!isLoading && !disabled) setIsOpen((prev) => !prev);
   }, [isLoading]);
 
   // ✅ Keep selection in sync with external `value`
@@ -119,8 +125,14 @@ const SearchableDropdown: React.FC<Props> = ({
       }`}
       ref={wrapperRef}
     >
+      <label className="tat-input-label" htmlFor={id}>
+        {label}
+        {required && <span className="text-danger">*</span>}
+      </label>
       <div
-        className={`${isOpen ? "active" : ""} search-dropdown-input`}
+        className={`${isOpen ? "active" : ""} search-dropdown-input ${
+          disabled ? "disabled" : ""
+        }`}
         onClick={toggleDropdown}
         tabIndex={0}
       >
@@ -135,12 +147,19 @@ const SearchableDropdown: React.FC<Props> = ({
             value={selected ? selected.label : ""}
             placeholder={placeholder}
             readOnly
+            disabled={disabled}
           />
         )}
-        {selected && <X height="16px" onClick={clearSelection} />}
-        <span className="search-caret">
-          {isOpen ? <ChevronUp height="16px" /> : <ChevronDown height="16px" />}
-        </span>
+        {selected && !disabled && <X height="16px" onClick={clearSelection} />}
+        {!disabled && (
+          <span className="search-caret">
+            {isOpen ? (
+              <ChevronUp height="16px" />
+            ) : (
+              <ChevronDown height="16px" />
+            )}
+          </span>
+        )}
       </div>
 
       {isOpen && (

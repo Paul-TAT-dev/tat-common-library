@@ -14,6 +14,8 @@ export const Default: Story = {
   args: {
     id: "itemList",
     value: "",
+    label: "Search",
+    required: true,
     isLoading: false,
     options: mockValue,
     placeholder: "-- Select an option --",
@@ -37,5 +39,23 @@ export const Loading: Story = {
     loadingMessage: "Loading...",
     noDataMessage: "No matches found",
     onChange: () => {},
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    id: "itemList",
+    value: "1",
+    isLoading: false,
+    options: [
+      { id: "1", label: "Item 1" },
+      { id: "2", label: "Item 2" },
+      { id: "3", label: "Item 3" },
+    ],
+    placeholder: "-- Select an option --",
+    loadingMessage: "Loading...",
+    noDataMessage: "No matches found",
+    onChange: () => {},
+    disabled: true,
   },
 };
