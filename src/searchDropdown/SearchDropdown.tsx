@@ -19,7 +19,7 @@ interface Props {
   value: string;
   options: itemType[];
   placeholder?: string;
-  label: string;
+  label?: string;
   onChange: (id: string, value: itemType | null) => void;
   noDataMessage?: string;
   isLoading?: boolean;
