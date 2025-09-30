@@ -27,6 +27,7 @@ interface Props {
   hide?: boolean;
   disabled?: boolean;
   required?: boolean;
+  className?: string;
 }
 
 const SearchableDropdown: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const SearchableDropdown: React.FC<Props> = ({
   hide,
   disabled = false,
   required = false,
+  className,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -122,7 +124,7 @@ const SearchableDropdown: React.FC<Props> = ({
       id={id}
       className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
         hide ? "d-none" : ""
-      }`}
+      } ${className}`}
       ref={wrapperRef}
     >
       <label className="tat-input-label" htmlFor={id}>

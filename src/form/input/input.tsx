@@ -10,6 +10,7 @@ interface InputProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   hide?: boolean;
+  className?: string;
 }
 
 const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
@@ -20,10 +21,11 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
   onChange,
   onKeyDown,
   hide,
+  className,
   ...props
 }) => {
   return (
-    <div className={`tat-input-wrapper mb-3  ${hide ? "d-none" : ""}`}>
+    <div className={`tat-input-wrapper ${hide ? "d-none" : ""} ${className}`}>
       <label className="tat-input-label" htmlFor={id}>
         {label}
       </label>
