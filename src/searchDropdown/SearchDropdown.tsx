@@ -128,8 +128,7 @@ const SearchableDropdown: React.FC<Props> = ({
       ref={wrapperRef}
     >
       <label className="tat-input-label" htmlFor={id}>
-        {label}
-        {required && <span className="text-danger">*</span>}
+        {label} {required && <span className="text-danger">*</span>}
       </label>
       <div
         className={`${isOpen ? "active" : ""} search-dropdown-input ${

@@ -30,6 +30,8 @@ export const StringOptions: Story = {
       {...args}
       value={[]} // initial state
       options={["France", "Italy", "Spain", "Germany"]}
+      label="Countries"
+      required
     />
   ),
 };

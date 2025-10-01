@@ -16,5 +16,6 @@ export const Default: Story = {
     placeholder: "-- Placeholder --",
     label: "Input label here",
     onChange: () => {},
+    required: true,
   },
 };

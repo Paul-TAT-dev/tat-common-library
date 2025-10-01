@@ -31,6 +31,7 @@ export const Default: Story = {
       label="Select Date"
       value=""
       placeholder="Pick a date"
+      required={true}
     />
   ),
 };
