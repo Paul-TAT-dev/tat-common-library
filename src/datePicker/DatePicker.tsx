@@ -1,5 +1,4 @@
 import { FC, useState, useRef, useEffect, useMemo } from "react";
-
 import "./DatePicker.scss";
 
 interface DatePickerProps {
@@ -29,7 +28,13 @@ const DatePicker: FC<DatePickerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [manualInput, setManualInput] = useState(value);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // ✅ sync external value to manual input
+  useEffect(() => {
+    setManualInput(value);
+  }, [value]);
 
   // ✅ Close dropdown when clicking outside
   useEffect(() => {
@@ -57,10 +62,7 @@ const DatePicker: FC<DatePickerProps> = ({
     const totalDays = daysInMonth(currentMonth);
     const firstDay = startDay(currentMonth);
 
-    // empty slots before start
     for (let i = 0; i < firstDay; i++) days.push(null);
-
-    // actual days
     for (let d = 1; d <= totalDays; d++) days.push(d);
 
     return days;
@@ -76,9 +78,37 @@ const DatePicker: FC<DatePickerProps> = ({
         return `${mm}/${dd}/${yyyy}`;
       case "DD/MM/YYYY":
         return `${dd}/${mm}/${yyyy}`;
+      case "MM/YY":
+        return `${mm}/${yyyy.toString().slice(-2)}`;
       default:
         return `${yyyy}-${mm}-${dd}`;
     }
+  };
+
+  const parseDate = (val: string) => {
+    const parts = val.split(/[-/]/);
+    let yyyy = 0,
+      mm = 0,
+      dd = 0;
+
+    if (format === "YYYY-MM-DD" && parts.length === 3) {
+      [yyyy, mm, dd] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+    } else if (format === "MM/DD/YYYY" && parts.length === 3) {
+      [mm, dd, yyyy] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+    } else if (format === "DD/MM/YYYY" && parts.length === 3) {
+      [dd, mm, yyyy] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+    }
+    if (yyyy && mm && dd) {
+      const d = new Date(yyyy, mm - 1, dd);
+      if (
+        d.getFullYear() === yyyy &&
+        d.getMonth() === mm - 1 &&
+        d.getDate() === dd
+      ) {
+        return d;
+      }
+    }
+    return null;
   };
 
   const handleSelectDate = (day: number) => {
@@ -87,7 +117,9 @@ const DatePicker: FC<DatePickerProps> = ({
       currentMonth.getMonth(),
       day
     );
-    onChange(formatDate(selectedDate));
+    const formatted = formatDate(selectedDate);
+    setManualInput(formatted);
+    onChange(formatted);
     setIsOpen(false);
   };
 
@@ -99,6 +131,22 @@ const DatePicker: FC<DatePickerProps> = ({
     setCurrentMonth(
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
     );
+
+  const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setManualInput(e.target.value);
+  };
+
+  const handleBlur = () => {
+    const parsed = parseDate(manualInput);
+    if (parsed) {
+      const formatted = formatDate(parsed);
+      setManualInput(formatted);
+      onChange(formatted);
+    } else {
+      // reset if invalid
+      setManualInput(value);
+    }
+  };
 
   if (hide) return null;
 
@@ -112,12 +160,13 @@ const DatePicker: FC<DatePickerProps> = ({
       <input
         id={id}
         type="text"
-        value={value}
+        value={manualInput}
         placeholder={placeholder}
         required={required}
         disabled={disabled}
         onFocus={() => !disabled && setIsOpen(true)}
-        readOnly
+        onChange={handleManualChange}
+        onBlur={handleBlur}
         className="datepicker-input"
       />
 
