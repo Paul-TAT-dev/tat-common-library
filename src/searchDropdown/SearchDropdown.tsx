@@ -14,13 +14,15 @@ export interface itemType {
   label: string;
 }
 
-interface Props {
+type Option = string | itemType;
+
+interface Props<T extends Option> {
   id: string;
-  value: string;
-  options: itemType[];
+  value: string; // external selected value (string id or string value)
+  options: T[];
   placeholder?: string;
   label?: string;
-  onChange: (id: string, value: itemType | null) => void;
+  onChange: (id: string, value: T | null) => void;
   noDataMessage?: string;
   isLoading?: boolean;
   loadingMessage?: string;
@@ -30,7 +32,7 @@ interface Props {
   className?: string;
 }
 
-const SearchableDropdown: React.FC<Props> = ({
+const SearchableDropdown = <T extends Option>({
   id,
   value,
   options,
@@ -44,54 +46,74 @@ const SearchableDropdown: React.FC<Props> = ({
   disabled = false,
   required = false,
   className,
-}) => {
+}: Props<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<itemType | null>(null);
+  const [selected, setSelected] = useState<T | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [debouncedSearch] = useDebounce(search, 300);
 
-  // ✅ Deduplicate options once
+  const isObjectMode = typeof options[0] === "object";
+
+  // ✅ Deduplicate options
   const uniqueOptions = useMemo(() => {
-    const seen = new Map<string, itemType>();
-    options.forEach((opt) => {
-      if (!seen.has(opt.id)) seen.set(opt.id, opt);
-    });
-    return Array.from(seen.values());
+    if (isObjectMode) {
+      const seen = new Map<string, itemType>();
+      (options as itemType[]).forEach((opt) => {
+        if (!seen.has(opt.id)) seen.set(opt.id, opt);
+      });
+      return Array.from(seen.values()) as T[];
+    }
+    return Array.from(new Set(options as string[])) as T[];
   }, [options]);
 
-  // ✅ Filter efficiently (O(n))
+  // ✅ Filter
   const filteredOptions = useMemo(() => {
     if (!debouncedSearch) return uniqueOptions;
     const lower = debouncedSearch.toLowerCase();
-    return uniqueOptions.filter((opt) =>
-      opt.label.toLowerCase().includes(lower)
-    );
-  }, [uniqueOptions, debouncedSearch]);
+
+    return uniqueOptions.filter((opt) => {
+      if (isObjectMode) {
+        return (opt as itemType).label.toLowerCase().includes(lower);
+      }
+      return (opt as string).toLowerCase().includes(lower);
+    });
+  }, [uniqueOptions, debouncedSearch, isObjectMode]);
 
   const toggleDropdown = useCallback(() => {
     if (!isLoading && !disabled) setIsOpen((prev) => !prev);
-  }, [isLoading]);
+  }, [isLoading, disabled]);
 
-  // ✅ Keep selection in sync with external `value`
+  // ✅ Keep external value in sync
   useEffect(() => {
     if (!value) {
       setSelected(null);
     } else {
-      const item = uniqueOptions.find((opt) => opt.id === value);
-      setSelected(item || null);
+      if (isObjectMode) {
+        const item = (uniqueOptions as itemType[]).find(
+          (opt) => opt.id === value
+        );
+        setSelected((item as T) || null);
+      } else {
+        const item = (uniqueOptions as string[]).find((opt) => opt === value);
+        setSelected((item as T) || null);
+      }
     }
-  }, [value, uniqueOptions]);
+  }, [value, uniqueOptions, isObjectMode]);
 
   const selectOption = useCallback(
-    (option: itemType) => {
+    (option: T) => {
       setSelected(option);
       setIsOpen(false);
       setSearch("");
+
+      const returnId = isObjectMode
+        ? (option as itemType).id
+        : (option as string);
       onChange?.(id, option);
     },
-    [id, onChange]
+    [id, onChange, isObjectMode]
   );
 
   const clearSelection = useCallback(
@@ -104,7 +126,7 @@ const SearchableDropdown: React.FC<Props> = ({
     [id, onChange]
   );
 
-  // ✅ Lightweight outside click listener
+  // ✅ Outside click
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       wrapperRef.current &&
@@ -119,6 +141,12 @@ const SearchableDropdown: React.FC<Props> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [handleClickOutside]);
 
+  const displayLabel = selected
+    ? isObjectMode
+      ? (selected as itemType).label
+      : (selected as string)
+    : "";
+
   return (
     <div
       id={id}
@@ -127,9 +155,11 @@ const SearchableDropdown: React.FC<Props> = ({
       } ${className}`}
       ref={wrapperRef}
     >
-      <label className="tat-input-label" htmlFor={id}>
-        {label} {required && <span className="text-danger">*</span>}
-      </label>
+      {label && (
+        <label className="tat-input-label" htmlFor={id}>
+          {label} {required && <span className="text-danger">*</span>}
+        </label>
+      )}
       <div
         className={`${isOpen ? "active" : ""} search-dropdown-input ${
           disabled ? "disabled" : ""
@@ -145,7 +175,7 @@ const SearchableDropdown: React.FC<Props> = ({
           <input
             type="text"
             className="search-selected-value"
-            value={selected ? selected.label : ""}
+            value={displayLabel}
             placeholder={placeholder}
             readOnly
             disabled={disabled}
@@ -180,11 +210,20 @@ const SearchableDropdown: React.FC<Props> = ({
             {filteredOptions.length === 0 ? (
               <li>{noDataMessage || "No matches found"}</li>
             ) : (
-              filteredOptions.map((opt) => (
-                <li key={opt.id} onClick={() => selectOption(opt)}>
-                  {opt.label}
-                </li>
-              ))
+              filteredOptions.map((opt, idx) => {
+                const key = isObjectMode
+                  ? (opt as itemType).id
+                  : `${opt as string}-${idx}`;
+                const labelText = isObjectMode
+                  ? (opt as itemType).label
+                  : (opt as string);
+
+                return (
+                  <li key={key} onClick={() => selectOption(opt)}>
+                    {labelText}
+                  </li>
+                );
+              })
             )}
           </ul>
         </div>
