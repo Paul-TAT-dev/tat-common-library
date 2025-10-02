@@ -4,16 +4,25 @@
   height: 100%;
   font-family: sans-serif;
   cursor: text;
+
+  .tat-input-label {
+    position: absolute;
+    padding: 0 5px;
+    font-size: 10px;
+    background: white;
+    top: -8px;
+    left: 5px;
+    line-height: normal;
+  }
 }
 
 .multi-select-default {
   display: flex;
   justify-content: space-between;
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 5px 5px 5px 10px;
   border-radius: 4px;
   background: white;
-  min-height: 44px;
   cursor: text;
 
   &:hover {
@@ -76,7 +85,7 @@
 
   .multi-select-search {
     width: 100%;
-    padding: 8px;
+    padding: 5px 5px 5px 10px;
     border: none;
     border-bottom: 1px solid #eee;
     box-sizing: border-box;
@@ -94,7 +103,7 @@
     overflow-y: auto;
 
     li {
-      padding: 10px;
+      padding: 5px 5px 5px 10px;
       cursor: pointer;
 
       &:hover {
@@ -103,18 +112,9 @@
     }
 
     .empty {
-      padding: 10px;
+      padding: 5px 5px 5px 10px;
       color: #6b7280;
       font-style: italic;
     }
   }
-}
-
-.tat-input-label {
-  position: absolute;
-  padding: 0 5px;
-  font-size: 10px;
-  background: white;
-  top: -8px;
-  left: 5px;
 }

@@ -13,6 +13,7 @@
     background: white;
     top: -8px;
     left: 5px;
+    line-height: normal;
   }
 }
 
@@ -20,7 +21,7 @@
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 5px 5px 5px 10px;
   border-radius: 4px;
   background: white;
   cursor: text;
@@ -67,10 +68,10 @@
 }
 
 .search-selected-wrapper {
-  padding: 8px;
+  padding: 5px 5px 5px 10px;
   .search-dropdown-search {
     width: 100%;
-    padding: 8px;
+    padding: 5px 5px 5px 10px;
     border: none;
     border-bottom: 1px solid #eee;
     box-sizing: border-box;
@@ -90,7 +91,7 @@
 }
 
 .search-dropdown-options li {
-  padding: 10px;
+  padding: 5px 5px 5px 10px;
   cursor: pointer;
   &:hover {
     background: #f0f0f0;

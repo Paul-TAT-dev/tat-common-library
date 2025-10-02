@@ -72,6 +72,7 @@ function RadioGroup<T extends string | OptionObject>({
               cursor: disabled ? "not-allowed" : "pointer",
               opacity: disabled ? 0.6 : 1,
               color: selected ? color : "inherit", // ✅ label text color
+              marginRight: "10px",
             }}
           >
             <input

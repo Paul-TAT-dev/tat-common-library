@@ -1,5 +1,7 @@
-import { ChangeEvent, FC, memo, useState } from "react";
+import { FC, memo, useState, ChangeEvent } from "react";
 import "./input.scss";
+
+// Phone input (install: npm install react-phone-input-2)
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -8,7 +10,7 @@ interface InputProps {
   value: string;
   placeholder?: string;
   label?: string;
-  onChange: (value: string) => void;
+  onChange: (value: string) => void; // ✅ always string
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   hide?: boolean;
   className?: string;
@@ -33,6 +35,7 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // ✅ Validation helpers
   const validateEmail = (val: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(val);
@@ -43,6 +46,7 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
     return digits.length >= 15 && digits.length <= 19;
   };
 
+  // ✅ Currency handler
   const handleCurrencyChange = (e: ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/[^\d.]/g, "");
     if (val) {
@@ -50,14 +54,15 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
       val = isNaN(num) ? "" : `$ ${num.toFixed(2)}`;
     }
     setInternalValue(val);
-    onChange(val);
+    onChange(val.toString());
   };
 
+  // ✅ Credit Card handler
   const handleCreditCardChange = (e: ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
     val = val.replace(/(.{4})/g, "$1 ").trim();
     setInternalValue(val);
-    onChange(val);
+    onChange(val.toString());
 
     if (dirty) {
       setError(
@@ -66,15 +71,18 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
     }
   };
 
+  // ✅ Default & Email handler
   const handleDefaultChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInternalValue(e.target.value);
-    onChange(e.target.value);
+    const val = e.target.value;
+    setInternalValue(val);
+    onChange(val.toString());
 
     if (dirty && format === "email") {
-      setError(validateEmail(e.target.value) ? null : "Invalid email format");
+      setError(validateEmail(val) ? null : "Invalid email format");
     }
   };
 
+  // ✅ Blur validation
   const handleBlur = () => {
     setDirty(true);
     if (format === "email") {
@@ -89,7 +97,7 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
     }
   };
 
-  // Special: Phone input
+  // ✅ Special case: phone input
   if (format === "phone") {
     return (
       <div
@@ -105,7 +113,7 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
         <PhoneInput
           country={"us"}
           value={value}
-          onChange={(val) => onChange(val)}
+          onChange={(val: string) => onChange(val.toString())} // ✅ string only
           inputProps={{
             name: id,
             required,
@@ -116,6 +124,7 @@ const Input: FC<InputProps & React.InputHTMLAttributes<HTMLInputElement>> = ({
     );
   }
 
+  // ✅ Standard input (currency, email, creditCard, text)
   return (
     <div
       className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
