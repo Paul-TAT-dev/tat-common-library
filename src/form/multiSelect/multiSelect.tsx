@@ -23,7 +23,7 @@ type MultiSelectInputProps<T extends string | OptionObject> = {
   options: T[]; // options and value must match
   onChange: (value: T[]) => void;
   hide?: boolean;
-  className?: string;
+  classNames?: string;
   required?: boolean;
 };
 
@@ -35,7 +35,7 @@ function MultiSelectInput<T extends string | OptionObject>({
   options,
   onChange,
   hide,
-  className,
+  classNames,
   required,
 }: MultiSelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,7 +115,7 @@ function MultiSelectInput<T extends string | OptionObject>({
 
   return (
     <div
-      className={`multi-select-wrapper ${hide ? "d-none" : ""} ${className}`}
+      className={`multi-select-wrapper ${hide ? "d-none" : ""} ${classNames}`}
       ref={wrapperRef}
     >
       {label && (

@@ -17,7 +17,7 @@ type RadioGroupProps<T extends string | OptionObject> = {
   disabled?: boolean;
   hide?: boolean;
   color?: string; // ✅ new prop
-  className?: string;
+  classNames?: string;
 };
 
 function RadioGroup<T extends string | OptionObject>({
@@ -32,7 +32,7 @@ function RadioGroup<T extends string | OptionObject>({
   disabled = false,
   hide = false,
   color = "#005fcc", // ✅ default color (blue)
-  className,
+  classNames,
 }: RadioGroupProps<T>) {
   if (hide) return null;
 
@@ -58,7 +58,7 @@ function RadioGroup<T extends string | OptionObject>({
       : value === opt;
 
   return (
-    <div id={id} className={className}>
+    <div id={id} className={classNames}>
       {options.map((opt, idx) => {
         const key = resolveKey(opt, idx);
         const label = resolveLabel(opt);

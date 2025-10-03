@@ -10,7 +10,7 @@ interface DatePickerProps {
   required?: boolean;
   disabled?: boolean;
   hide?: boolean;
-  className?: string;
+  classNames?: string;
   onChange: (value: string) => void;
 }
 
@@ -23,7 +23,7 @@ const DatePicker: FC<DatePickerProps> = ({
   required = false,
   disabled = false,
   hide = false,
-  className,
+  classNames = "",
   onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -151,7 +151,7 @@ const DatePicker: FC<DatePickerProps> = ({
   if (hide) return null;
 
   return (
-    <div className={`datepicker-wrapper ${className || ""}`} ref={wrapperRef}>
+    <div className={`datepicker-wrapper ${classNames || ""}`} ref={wrapperRef}>
       {label && (
         <label htmlFor={id} className="datepicker-label">
           {label} {required && <span style={{ color: "red" }}>*</span>}

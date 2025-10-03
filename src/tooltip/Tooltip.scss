@@ -1,0 +1,16 @@
+#tat-tooltip {
+  .tooltip-inner {
+    background: white;
+    color: black;
+    border: 1px solid black;
+    max-width: 400px;
+    text-align: left;
+  }
+}
+.tooltip-icon {
+  svg {
+    color: #0275ff;
+    fill: #e0f1ff;
+    vertical-align: text-top;
+  }
+}

@@ -8,17 +8,17 @@ interface CheckboxProps {
   isChecked?: boolean;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   hide?: boolean;
-  className?: string;
+  classNames?: string;
 }
 
 const Checkbox: FC<
   CheckboxProps & React.InputHTMLAttributes<HTMLInputElement>
-> = ({ id, label, isChecked, onChange, hide, className, ...props }) => {
+> = ({ id, label, isChecked, onChange, hide, classNames = "", ...props }) => {
   return (
     <div
       className={`form-floating-sm form-check ${
         hide ? "d-none" : ""
-      } ${className}`}
+      } ${classNames}`}
     >
       <input
         className="form-check-input"

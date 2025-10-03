@@ -29,7 +29,7 @@ interface Props<T extends Option> {
   hide?: boolean;
   disabled?: boolean;
   required?: boolean;
-  className?: string;
+  classNames?: string;
 }
 
 const SearchableDropdown = <T extends Option>({
@@ -45,7 +45,7 @@ const SearchableDropdown = <T extends Option>({
   hide,
   disabled = false,
   required = false,
-  className,
+  classNames,
 }: Props<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -152,7 +152,7 @@ const SearchableDropdown = <T extends Option>({
       id={id}
       className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
         hide ? "d-none" : ""
-      } ${className}`}
+      } ${classNames}`}
       ref={wrapperRef}
     >
       {label && (

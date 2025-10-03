@@ -11,7 +11,7 @@ interface TTextAreaProps {
   required?: boolean;
   disabled?: boolean;
   hide?: boolean;
-  className?: string;
+  classNames?: string;
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
@@ -26,14 +26,14 @@ const TextArea: FC<
   required = false,
   disabled = false,
   hide = false,
-  className,
+  classNames,
   onChange,
   ...props
 }) => {
   if (hide) return null;
 
   return (
-    <div className={`textarea-wrapper ${className || ""}`}>
+    <div className={`textarea-wrapper ${classNames || ""}`}>
       {label && (
         <label htmlFor={id} className="textarea-label">
           {label} {required && <span style={{ color: "red" }}>*</span>}
