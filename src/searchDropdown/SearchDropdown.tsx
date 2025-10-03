@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import "./SearchableDropdown.scss";
+import "./SearchDropdown.scss";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { useDebounce } from "use-debounce";
 
@@ -18,7 +18,7 @@ type Option = string | itemType;
 
 interface Props<T extends Option> {
   id: string;
-  value: string; // external selected value (string id or string value)
+  value: string;
   options: T[];
   placeholder?: string;
   label?: string;
@@ -30,9 +30,10 @@ interface Props<T extends Option> {
   disabled?: boolean;
   required?: boolean;
   className?: string;
+  customOption?: React.ReactNode; // ✅ new prop
 }
 
-const SearchableDropdown = <T extends Option>({
+const SearchDropdown = <T extends Option>({
   id,
   value,
   options,
@@ -46,6 +47,7 @@ const SearchableDropdown = <T extends Option>({
   disabled = false,
   required = false,
   className,
+  customOption,
 }: Props<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -56,7 +58,6 @@ const SearchableDropdown = <T extends Option>({
 
   const isObjectMode = typeof options[0] === "object";
 
-  // ✅ Deduplicate options
   const uniqueOptions = useMemo(() => {
     if (isObjectMode) {
       const seen = new Map<string, itemType>();
@@ -68,7 +69,6 @@ const SearchableDropdown = <T extends Option>({
     return Array.from(new Set(options as string[])) as T[];
   }, [options]);
 
-  // ✅ Filter
   const filteredOptions = useMemo(() => {
     if (!debouncedSearch) return uniqueOptions;
     const lower = debouncedSearch.toLowerCase();
@@ -85,7 +85,6 @@ const SearchableDropdown = <T extends Option>({
     if (!isLoading && !disabled) setIsOpen((prev) => !prev);
   }, [isLoading, disabled]);
 
-  // ✅ Keep external value in sync
   useEffect(() => {
     if (!value) {
       setSelected(null);
@@ -107,10 +106,6 @@ const SearchableDropdown = <T extends Option>({
       setSelected(option);
       setIsOpen(false);
       setSearch("");
-
-      const returnId = isObjectMode
-        ? (option as itemType).id
-        : (option as string);
       onChange?.(id, option);
     },
     [id, onChange, isObjectMode]
@@ -126,7 +121,6 @@ const SearchableDropdown = <T extends Option>({
     [id, onChange]
   );
 
-  // ✅ Outside click
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       wrapperRef.current &&
@@ -207,6 +201,9 @@ const SearchableDropdown = <T extends Option>({
           </div>
 
           <ul className="search-dropdown-options">
+            {customOption && (
+              <li className="search-dropdown-custom">{customOption}</li>
+            )}
             {filteredOptions.length === 0 ? (
               <li>{noDataMessage || "No matches found"}</li>
             ) : (
@@ -232,4 +229,4 @@ const SearchableDropdown = <T extends Option>({
   );
 };
 
-export default SearchableDropdown;
+export default SearchDropdown;
