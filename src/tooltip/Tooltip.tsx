@@ -12,7 +12,7 @@ interface TooltipProps {
   controlShow?: boolean;
   setControlShow?: React.Dispatch<React.SetStateAction<string>>;
   placement?: "top" | "bottom" | "left" | "right";
-  classNames?: string;
+  className?: string;
 }
 
 const Tooltip: FC<TooltipProps> = ({
@@ -24,7 +24,7 @@ const Tooltip: FC<TooltipProps> = ({
   controlShow,
   setControlShow,
   placement = "top",
-  classNames = "",
+  className = "",
 }) => {
   const [isShow, setIsShow] = useState(false);
 
@@ -80,7 +80,7 @@ const Tooltip: FC<TooltipProps> = ({
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
         onClick={handleOnMouseEnter}
-        className={`tooltip-icon ${classNames}`}
+        className={`tooltip-icon ${className}`}
       >
         {icon}
       </span>

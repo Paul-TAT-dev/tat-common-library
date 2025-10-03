@@ -24,7 +24,7 @@ export const Default: Story = {
     info: "This is a simple tooltip message",
     icon: <Info size={18} />,
     placement: "top",
-    classNames: "",
+    className: "",
   },
 };
 

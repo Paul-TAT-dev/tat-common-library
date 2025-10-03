@@ -16,7 +16,7 @@ interface InputProps {
   onChange: (value: string) => void; // always string
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   hide?: boolean;
-  classNames?: string;
+  className?: string;
   required?: boolean;
   disabled?: boolean;
   format?: "currency" | "phone" | "email" | "creditCard" | "text";
@@ -30,7 +30,7 @@ const Input: FC<InputProps> = ({
   onChange,
   onKeyDown,
   hide,
-  classNames,
+  className,
   required,
   disabled = false,
   format = "text",
@@ -69,7 +69,7 @@ const Input: FC<InputProps> = ({
     return (
       <div
         className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
-          classNames || ""
+          className || ""
         }`}
       >
         {label && (
@@ -97,7 +97,7 @@ const Input: FC<InputProps> = ({
     return (
       <div
         className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
-          classNames || ""
+          className || ""
         }`}
       >
         {label && (
@@ -129,7 +129,7 @@ const Input: FC<InputProps> = ({
     return (
       <div
         className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
-          classNames || ""
+          className || ""
         } ${error ? "error" : ""}`}
       >
         {label && (
@@ -159,7 +159,7 @@ const Input: FC<InputProps> = ({
   return (
     <div
       className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
-        classNames || ""
+        className || ""
       } ${error ? "error" : ""}`}
     >
       {label && (
