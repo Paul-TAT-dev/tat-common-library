@@ -13,6 +13,7 @@ interface TooltipProps {
   setControlShow?: React.Dispatch<React.SetStateAction<string>>;
   placement?: "top" | "bottom" | "left" | "right";
   className?: string;
+  inverted?: boolean;
 }
 
 const Tooltip: FC<TooltipProps> = ({
@@ -25,6 +26,7 @@ const Tooltip: FC<TooltipProps> = ({
   setControlShow,
   placement = "top",
   className = "",
+  inverted = true,
 }) => {
   const [isShow, setIsShow] = useState(false);
 
@@ -86,7 +88,11 @@ const Tooltip: FC<TooltipProps> = ({
       </span>
       <Overlay target={targetRef.current} placement={placement} show={isShow}>
         {(props) => (
-          <BTooltip id="tat-tooltip" {...props}>
+          <BTooltip
+            id="tat-tooltip"
+            {...props}
+            className={inverted ? "inverted" : ""}
+          >
             <span>{tip}</span>
           </BTooltip>
         )}

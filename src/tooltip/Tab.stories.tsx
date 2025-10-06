@@ -59,6 +59,7 @@ export const Controllable: Story = {
           isControllable
           controlShow={controlShow === "tooltip-3"}
           setControlShow={setControlShow}
+          inverted
         />
         <button onClick={() => setControlShow("tooltip-3")}>
           Show Tooltip
