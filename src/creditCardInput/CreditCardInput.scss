@@ -1,0 +1,50 @@
+.credit-card-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: system-ui, sans-serif;
+
+  .credit-card-label {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .credit-card-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+
+      input {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+        }
+
+        &:disabled {
+          background: #f9f9f9;
+        }
+      }
+    }
+
+    .input-row {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+}

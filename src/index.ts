@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+export * from "./creditCardInput";
 export * from "./datePicker";
 export * from "./form";
 export * from "./modal";

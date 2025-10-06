@@ -19,7 +19,7 @@ interface InputProps {
   className?: string;
   required?: boolean;
   disabled?: boolean;
-  format?: "currency" | "phone" | "email" | "creditCard" | "text";
+  format?: "currency" | "phone" | "email" | "text";
 }
 
 const Input: FC<InputProps> = ({
@@ -45,22 +45,11 @@ const Input: FC<InputProps> = ({
     return regex.test(val);
   };
 
-  const validateCreditCard = (val: string) => {
-    const digits = val.replace(/\D/g, "");
-    return digits.length >= 15 && digits.length <= 19;
-  };
-
   const handleBlur = () => {
     setDirty(true);
 
     if (format === "email") {
       setError(validateEmail(value) ? null : "Invalid email format");
-    }
-
-    if (format === "creditCard") {
-      setError(
-        validateCreditCard(value) ? null : "Credit card must be 15–19 digits"
-      );
     }
   };
 
@@ -117,37 +106,6 @@ const Input: FC<InputProps> = ({
           onBlur={handleBlur}
           decimalScale={2}
           fixedDecimalScale={true}
-          {...props}
-        />
-        {error && <div className="tat-input-error">{error}</div>}
-      </div>
-    );
-  }
-
-  // Credit card input
-  if (format === "creditCard") {
-    return (
-      <div
-        className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
-          className || ""
-        } ${error ? "error" : ""}`}
-      >
-        {label && (
-          <label className="tat-input-label" htmlFor={id}>
-            {label} {required && <span style={{ color: "red" }}>*</span>}
-          </label>
-        )}
-        <PatternFormat
-          id={id}
-          format="#### #### #### #### ####"
-          allowEmptyFormatting
-          mask="_"
-          value={value}
-          placeholder={placeholder || "xxxx xxxx xxxx xxxx"}
-          className="tat-input"
-          onValueChange={(values) => onChange(values.value)} // raw digits
-          disabled={disabled}
-          onBlur={handleBlur}
           {...props}
         />
         {error && <div className="tat-input-error">{error}</div>}

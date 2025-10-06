@@ -143,7 +143,6 @@ const SearchDropdown = <T extends Option>({
 
   return (
     <div
-      id={id}
       className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
         hide ? "d-none" : ""
       } ${className}`}
@@ -167,6 +166,7 @@ const SearchDropdown = <T extends Option>({
           </span>
         ) : (
           <input
+            id={id}
             type="text"
             className="search-selected-value"
             value={displayLabel}
