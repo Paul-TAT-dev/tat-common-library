@@ -43,7 +43,7 @@ export const WithFormat: Story = {
       id="formattedDate"
       label="Formatted Date"
       value=""
-      format="MM/DD/YYYY"
+      format="MM/dd/yyyy"
       placeholder="MM/DD/YYYY"
     />
   ),

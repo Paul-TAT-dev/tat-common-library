@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.7",
+    "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-credit-cards-2": "^1.0.3",
     "react-dom": "^19.1.0",

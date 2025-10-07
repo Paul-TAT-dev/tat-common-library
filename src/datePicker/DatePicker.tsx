@@ -1,11 +1,12 @@
-import { FC, useState, useRef, useEffect, useMemo } from "react";
+import React, { FC, useState, useRef, useEffect, useMemo } from "react";
+import { parse, parseISO, format as formatDateFn, isValid } from "date-fns";
 import "./DatePicker.scss";
 
 interface DatePickerProps {
   id: string;
   label?: string;
   value: string;
-  format?: string; // e.g. "YYYY-MM-DD", "MM/DD/YYYY"
+  format?: string;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -14,11 +15,38 @@ interface DatePickerProps {
   onChange: (value: string) => void;
 }
 
+const COMMON_FORMATS = [
+  "yyyy-MM-dd",
+  "MM/dd/yyyy",
+  "MM-dd-yyyy",
+  "MM.dd.yyyy",
+  "MM dd yyyy",
+  "MM/dd/yy",
+  "MM.dd.yy",
+  "MM-dd-yy",
+  "MM dd yy",
+  "ddMMMyy",
+  "dd MMM yy",
+  "dd MMM yyyy",
+  "MMM dd yyyy",
+  "MMMM dd yyyy",
+  "MMMM dd",
+  "MMM dd",
+  "MMMM d, yyyy",
+  "MMM d, yyyy",
+  "MMMM d",
+  "MMM d",
+  "MM/dd",
+  "MM.dd",
+  "MM-dd",
+  "MM dd",
+];
+
 const DatePicker: FC<DatePickerProps> = ({
   id,
   label,
   value,
-  format = "YYYY-MM-DD",
+  format = "yyyy-MM-dd",
   placeholder = "-- Select date --",
   required = false,
   disabled = false,
@@ -27,16 +55,43 @@ const DatePicker: FC<DatePickerProps> = ({
   onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [manualInput, setManualInput] = useState(value);
+  const [manualInput, setManualInput] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // ✅ sync external value to manual input
-  useEffect(() => {
-    setManualInput(value);
-  }, [value]);
+  /** Parse helper */
+  const parseDate = (val: string): Date | null => {
+    if (!val) return null;
+    const trimmed = val.trim();
+    const iso = parseISO(trimmed);
+    if (isValid(iso)) return iso;
+    for (const fmt of COMMON_FORMATS) {
+      const parsed = parse(trimmed, fmt, new Date());
+      if (isValid(parsed)) return parsed;
+    }
+    const jsDate = new Date(trimmed);
+    return isValid(jsDate) ? jsDate : null;
+  };
 
-  // ✅ Close dropdown when clicking outside
+  const formatDate = (date: Date) => formatDateFn(date, format);
+
+  /** Sync with external value */
+  useEffect(() => {
+    const parsed = parseDate(value);
+    if (!parsed) {
+      setSelectedDate(null);
+      setManualInput("");
+      return;
+    }
+    setSelectedDate(parsed);
+    setManualInput(formatDate(parsed));
+    setCurrentMonth(new Date(parsed.getFullYear(), parsed.getMonth(), 1));
+  }, [value, format]);
+
+  /** Close on click outside */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -50,113 +105,106 @@ const DatePicker: FC<DatePickerProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  /** Calendar helpers */
   const daysInMonth = (date: Date) =>
     new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
   const startDay = (date: Date) =>
     new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
-  // ✅ Generate calendar days
   const calendarDays = useMemo(() => {
     const days: (number | null)[] = [];
     const totalDays = daysInMonth(currentMonth);
     const firstDay = startDay(currentMonth);
-
     for (let i = 0; i < firstDay; i++) days.push(null);
     for (let d = 1; d <= totalDays; d++) days.push(d);
-
     return days;
   }, [currentMonth]);
 
-  const formatDate = (date: Date) => {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-
-    switch (format) {
-      case "MM/DD/YYYY":
-        return `${mm}/${dd}/${yyyy}`;
-      case "DD/MM/YYYY":
-        return `${dd}/${mm}/${yyyy}`;
-      case "MM/YY":
-        return `${mm}/${yyyy.toString().slice(-2)}`;
-      default:
-        return `${yyyy}-${mm}-${dd}`;
-    }
+  /** Select date */
+  const handleSelectDate = (date: Date) => {
+    const displayValue = formatDateFn(date, format);
+    const isoValue = formatDateFn(date, "yyyy-MM-dd");
+    setSelectedDate(date);
+    setManualInput(displayValue);
+    setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+    setIsOpen(false);
+    onChange(isoValue);
   };
 
-  const parseDate = (val: string) => {
-    const parts = val.split(/[-/]/);
-    let yyyy = 0,
-      mm = 0,
-      dd = 0;
-
-    if (format === "YYYY-MM-DD" && parts.length === 3) {
-      [yyyy, mm, dd] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
-    } else if (format === "MM/DD/YYYY" && parts.length === 3) {
-      [mm, dd, yyyy] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
-    } else if (format === "DD/MM/YYYY" && parts.length === 3) {
-      [dd, mm, yyyy] = [Number(parts[0]), Number(parts[1]), Number(parts[2])];
-    }
-    if (yyyy && mm && dd) {
-      const d = new Date(yyyy, mm - 1, dd);
-      if (
-        d.getFullYear() === yyyy &&
-        d.getMonth() === mm - 1 &&
-        d.getDate() === dd
-      ) {
-        return d;
-      }
-    }
-    return null;
-  };
-
-  const handleSelectDate = (day: number) => {
-    const selectedDate = new Date(
+  /** Day click */
+  const handleDayClick = (day: number) => {
+    const newDate = new Date(
       currentMonth.getFullYear(),
       currentMonth.getMonth(),
       day
     );
-    const formatted = formatDate(selectedDate);
-    setManualInput(formatted);
-    onChange(formatted);
-    setIsOpen(false);
+    handleSelectDate(newDate);
   };
 
-  const prevMonth = () =>
+  /** Month navigation (keep dropdown open) */
+  const prevMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setCurrentMonth(
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
     );
-  const nextMonth = () =>
+  };
+
+  const nextMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setCurrentMonth(
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
     );
+  };
 
+  /** Manual typing */
   const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setManualInput(e.target.value);
   };
 
-  const handleBlur = () => {
+  const handleConfirmInput = () => {
     const parsed = parseDate(manualInput);
     if (parsed) {
-      const formatted = formatDate(parsed);
-      setManualInput(formatted);
-      onChange(formatted);
+      handleSelectDate(parsed);
     } else {
-      // reset if invalid
-      setManualInput(value);
+      if (selectedDate) setManualInput(formatDate(selectedDate));
+      else setManualInput("");
+    }
+  };
+
+  /**
+   * Blur fix — delay closing to allow button clicks inside dropdown
+   */
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setTimeout(() => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(document.activeElement)
+      ) {
+        handleConfirmInput();
+        setIsOpen(false);
+      }
+    }, 120);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleConfirmInput();
     }
   };
 
   if (hide) return null;
 
   return (
-    <div className={`datepicker-wrapper ${className || ""}`} ref={wrapperRef}>
+    <div className={`datepicker-wrapper ${className}`} ref={wrapperRef}>
       {label && (
         <label htmlFor={id} className="datepicker-label">
           {label} {required && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
+
       <input
         id={id}
         type="text"
@@ -167,48 +215,50 @@ const DatePicker: FC<DatePickerProps> = ({
         onFocus={() => !disabled && setIsOpen(true)}
         onChange={handleManualChange}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         className="datepicker-input"
       />
 
       {isOpen && !disabled && (
         <div className="datepicker-dropdown">
           <div className="datepicker-header">
-            <button onClick={prevMonth}>&lt;</button>
+            <button type="button" onMouseDown={prevMonth}>
+              &lt;
+            </button>
             <span>
-              {currentMonth.toLocaleString("default", {
-                month: "long",
-              })}{" "}
+              {currentMonth.toLocaleString("default", { month: "long" })}{" "}
               {currentMonth.getFullYear()}
             </span>
-            <button onClick={nextMonth}>&gt;</button>
+            <button type="button" onMouseDown={nextMonth}>
+              &gt;
+            </button>
           </div>
+
           <div className="datepicker-grid">
             {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-              <div key={day} className="datepicker-day-name">
+              <div key={`label-${day}`} className="datepicker-day-name">
                 {day}
               </div>
             ))}
-            {calendarDays.map((day, idx) => (
-              <div
-                key={idx}
-                className={`datepicker-day ${
-                  day &&
-                  value ===
-                    formatDate(
-                      new Date(
-                        currentMonth.getFullYear(),
-                        currentMonth.getMonth(),
-                        day
-                      )
-                    )
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => day && handleSelectDate(day)}
-              >
-                {day || ""}
-              </div>
-            ))}
+
+            {calendarDays.map((day, idx) => {
+              const isSelected =
+                !!selectedDate &&
+                day === selectedDate.getDate() &&
+                selectedDate.getMonth() === currentMonth.getMonth() &&
+                selectedDate.getFullYear() === currentMonth.getFullYear();
+
+              return (
+                <div
+                  key={`daycell-${idx}`}
+                  className={`datepicker-day ${isSelected ? "selected" : ""}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => day && handleDayClick(day)}
+                >
+                  {day || ""}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
