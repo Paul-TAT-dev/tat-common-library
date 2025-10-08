@@ -91,7 +91,7 @@ const SearchDropdown = <T extends Option>({
     } else {
       if (isObjectMode) {
         const item = (uniqueOptions as itemType[]).find(
-          (opt) => opt.id === value
+          (opt) => opt.id === value || opt.label === value
         );
         setSelected((item as T) || null);
       } else {
