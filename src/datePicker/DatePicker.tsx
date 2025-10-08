@@ -123,7 +123,7 @@ const DatePicker: FC<DatePickerProps> = ({
   /** Select date */
   const handleSelectDate = (date: Date) => {
     const displayValue = formatDateFn(date, format);
-    const isoValue = formatDateFn(date, "yyyy-MM-dd");
+    const isoValue = formatDateFn(date, format);
     setSelectedDate(date);
     setManualInput(displayValue);
     setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
