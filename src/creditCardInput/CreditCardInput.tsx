@@ -137,7 +137,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
             value={cardData.name}
             onFocus={() => setFocus("name")}
             onChange={(e) => handleChange("name", e.target.value)}
-            placeholder="John Doe"
+            placeholder="Name on Credit Card"
             disabled={disabled}
           />
         </div>
@@ -150,7 +150,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
             value={cardData.number}
             onFocus={() => setFocus("number")}
             onChange={(e) => handleChange("number", e.target.value)}
-            placeholder="1234 5678 9012 3456"
+            placeholder="**** **** **** ****"
             maxLength={19}
             disabled={disabled}
           />
@@ -179,7 +179,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
                 value={cardData.cvc}
                 onFocus={() => setFocus("cvc")}
                 onChange={(e) => handleChange("cvc", e.target.value)}
-                placeholder="123"
+                placeholder="***"
                 maxLength={4}
                 disabled={disabled}
               />
