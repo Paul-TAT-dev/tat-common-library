@@ -1,0 +1,49 @@
+.tat-tab {
+  label {
+    cursor: pointer;
+  }
+  &.tat-success {
+    color: #00ad5a;
+    &.active {
+      background-color: #00ad5a;
+      color: #fff;
+      border: 1px solid #2b8058;
+    }
+    &:hover {
+      color: #fff;
+    }
+  }
+  &.tat-alert {
+    color: #f03e3e;
+    &.active {
+      background-color: #f03e3e;
+      color: #fff;
+      border: 1px solid #a43e3a;
+    }
+    &:hover {
+      color: #fff;
+    }
+  }
+  &.tat-error {
+    color: #f03e3e;
+    &.active {
+      background-color: #f03e3e;
+      color: #fff;
+      border: 1px solid #a43e3a;
+    }
+    &:hover {
+      color: #fff;
+    }
+  }
+  &.tat-todo {
+    color: #6c757d;
+    &.active {
+      background-color: #6c757d;
+      color: #fff;
+      border: 1px solid #495057;
+    }
+    &:hover {
+      color: #fff;
+    }
+  }
+}
