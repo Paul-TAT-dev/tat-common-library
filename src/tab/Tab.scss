@@ -2,6 +2,12 @@
   label {
     cursor: pointer;
   }
+  &.dis {
+    cursor: not-allowed;
+    label {
+      cursor: not-allowed;
+    }
+  }
   &.tat-success {
     color: #00ad5a;
     &.active {
