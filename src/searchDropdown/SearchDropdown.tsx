@@ -1,13 +1,13 @@
 import React, {
+  useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
 } from "react";
 import "./SearchDropdown.scss";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
-import { useDebounce } from "use-debounce";
 
 export interface itemType {
   id: string;
@@ -30,7 +30,23 @@ interface Props<T extends Option> {
   disabled?: boolean;
   required?: boolean;
   className?: string;
-  customOption?: React.ReactNode; // ✅ new prop
+  customOption?: React.ReactNode;
+
+  serverSide?: boolean;
+  searchValue?: string;
+  onSearchValueChange?: (value: string) => void;
+
+  onEndReached?: () => void;
+  endReachedThresholdPx?: number;
+
+  itemHeight?: number;
+  maxMenuHeight?: number;
+}
+
+function isItemType(x: unknown): x is itemType {
+  return (
+    !!x && typeof x === "object" && "id" in (x as any) && "label" in (x as any)
+  );
 }
 
 const SearchDropdown = <T extends Option>({
@@ -48,104 +64,192 @@ const SearchDropdown = <T extends Option>({
   required = false,
   className,
   customOption,
+
+  serverSide = false,
+  searchValue,
+  onSearchValueChange,
+
+  onEndReached,
+  endReachedThresholdPx = 80,
+
+  itemHeight = 32,
+  maxMenuHeight = 240,
 }: Props<T>) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<T | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
-  const [debouncedSearch] = useDebounce(search, 300);
+  const [isOpen, setIsOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState("");
 
-  const isObjectMode = typeof options[0] === "object";
+  const actualSearch = searchValue ?? localSearch;
+  const isObjectMode = useMemo(() => isItemType(options[0]), [options]);
 
-  const uniqueOptions = useMemo(() => {
+  const { uniqueOptions, byId, byLabel } = useMemo(() => {
+    const uniq: T[] = [];
+    const idMap = new Map<string, T>();
+    const labelMap = new Map<string, T>();
+
     if (isObjectMode) {
-      const seen = new Map<string, itemType>();
-      (options as itemType[]).forEach((opt) => {
-        if (!seen.has(opt.id)) seen.set(opt.id, opt);
-      });
-      return Array.from(seen.values()) as T[];
-    }
-    return Array.from(new Set(options as string[])) as T[];
-  }, [options]);
-
-  const filteredOptions = useMemo(() => {
-    if (!debouncedSearch) return uniqueOptions;
-    const lower = debouncedSearch.toLowerCase();
-
-    return uniqueOptions.filter((opt) => {
-      if (isObjectMode) {
-        return (opt as itemType).label.toLowerCase().includes(lower);
+      for (const opt of options as unknown as itemType[]) {
+        if (!idMap.has(opt.id)) {
+          const typed = opt as unknown as T;
+          idMap.set(opt.id, typed);
+          labelMap.set(opt.label, typed);
+          uniq.push(typed);
+        }
       }
-      return (opt as string).toLowerCase().includes(lower);
-    });
-  }, [uniqueOptions, debouncedSearch, isObjectMode]);
+    } else {
+      const seen = new Set<string>();
+      for (const s of options as unknown as string[]) {
+        if (!seen.has(s)) {
+          seen.add(s);
+          uniq.push(s as unknown as T);
+        }
+      }
+    }
+
+    return { uniqueOptions: uniq, byId: idMap, byLabel: labelMap };
+  }, [options, isObjectMode]);
+
+  const selected: T | null = useMemo(() => {
+    if (!value) return null;
+    if (isObjectMode) {
+      return (byId.get(value) ?? byLabel.get(value) ?? null) as T | null;
+    }
+    return uniqueOptions.includes(value as any)
+      ? (value as unknown as T)
+      : null;
+  }, [value, isObjectMode, byId, byLabel, uniqueOptions]);
+
+  const displayLabel = useMemo(() => {
+    if (!selected) return "";
+    return isObjectMode
+      ? (selected as unknown as itemType).label
+      : (selected as unknown as string);
+  }, [selected, isObjectMode]);
+
+  const shownOptions = useMemo(() => {
+    if (serverSide) return uniqueOptions;
+
+    const q = actualSearch.trim().toLowerCase();
+    if (!q) return uniqueOptions;
+
+    if (isObjectMode) {
+      return uniqueOptions.filter((opt) =>
+        ((opt as unknown as itemType).label || "").toLowerCase().includes(q)
+      );
+    }
+    return uniqueOptions.filter((opt) =>
+      (opt as unknown as string).toLowerCase().includes(q)
+    );
+  }, [serverSide, uniqueOptions, actualSearch, isObjectMode]);
 
   const toggleDropdown = useCallback(() => {
-    if (!isLoading && !disabled) setIsOpen((prev) => !prev);
-  }, [isLoading, disabled]);
+    if (disabled || isLoading) return;
+    setIsOpen((v) => !v);
+  }, [disabled, isLoading]);
 
   useEffect(() => {
-    if (!value) {
-      setSelected(null);
-    } else {
-      if (isObjectMode) {
-        const item = (uniqueOptions as itemType[]).find(
-          (opt) => opt.id === value || opt.label === value
-        );
-        setSelected((item as T) || null);
-      } else {
-        const item = (uniqueOptions as string[]).find((opt) => opt === value);
-        setSelected((item as T) || null);
-      }
-    }
-  }, [value, uniqueOptions, isObjectMode]);
+    const onPointerDown = (event: PointerEvent) => {
+      const el = wrapperRef.current;
+      if (!el) return;
+      if (!el.contains(event.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown, { passive: true });
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, []);
 
-  const selectOption = useCallback(
-    (option: T) => {
-      setSelected(option);
-      setIsOpen(false);
-      setSearch("");
-      onChange?.(id, option);
+  const setSearchValueSafe = useCallback(
+    (next: string) => {
+      if (onSearchValueChange) onSearchValueChange(next);
+      else setLocalSearch(next);
     },
-    [id, onChange, isObjectMode]
+    [onSearchValueChange]
   );
 
+  // ✅ Clicking X should show ALL cached options:
+  // We do that by setting search = "" (Vendor will immediately swap in cached[""] options)
   const clearSelection = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      setSelected(null);
-      setSearch("");
-      onChange?.(id, null);
+      onChange(id, null);
+      setSearchValueSafe(""); // <- triggers "show all cached"
+      setIsOpen(true); // keep open so user sees list
+      // optional: scroll to top
+      const node = listRef.current;
+      if (node) node.scrollTop = 0;
     },
-    [id, onChange]
+    [id, onChange, setSearchValueSafe]
   );
 
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (
-      wrapperRef.current &&
-      !wrapperRef.current.contains(event.target as Node)
-    ) {
-      setIsOpen(false);
+  const onSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchValueSafe(e.target.value);
+      if (!disabled && !isLoading) setIsOpen(true);
+    },
+    [setSearchValueSafe, disabled, isLoading]
+  );
+
+  // Virtualization
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const onScroll = useCallback(() => {
+    const node = listRef.current;
+    if (!node) return;
+
+    setScrollTop(node.scrollTop);
+
+    if (onEndReached) {
+      const remaining =
+        node.scrollHeight - (node.scrollTop + node.clientHeight);
+      if (remaining <= endReachedThresholdPx) onEndReached();
     }
-  }, []);
+  }, [onEndReached, endReachedThresholdPx]);
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [handleClickOutside]);
+  const total = shownOptions.length;
+  const viewportHeight = Math.min(maxMenuHeight, total * itemHeight);
+  const overscan = 6;
 
-  const displayLabel = selected
-    ? isObjectMode
-      ? (selected as itemType).label
-      : (selected as string)
-    : "";
+  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+  const visibleCount = Math.ceil(viewportHeight / itemHeight) + overscan * 2;
+  const endIndex = Math.min(total, startIndex + visibleCount);
+
+  const visibleOptions = useMemo(
+    () => shownOptions.slice(startIndex, endIndex),
+    [shownOptions, startIndex, endIndex]
+  );
+
+  const topSpacer = startIndex * itemHeight;
+  const bottomSpacer = (total - endIndex) * itemHeight;
+
+  const onOptionClick = useCallback(
+    (e: React.MouseEvent<HTMLUListElement>) => {
+      const target = e.target as HTMLElement;
+      const li = target.closest("li[data-idx]") as HTMLLIElement | null;
+      if (!li) return;
+
+      const absoluteIdx = Number(li.dataset.idx);
+      const opt = shownOptions[absoluteIdx];
+      if (!opt) return;
+
+      onChange(id, opt);
+      setIsOpen(false);
+    },
+    [shownOptions, id, onChange]
+  );
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    const node = listRef.current;
+    if (node) node.scrollTop = 0;
+    setScrollTop(0);
+  }, [isOpen]);
 
   return (
     <div
       className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
         hide ? "d-none" : ""
-      } ${className}`}
+      } ${className ?? ""}`}
       ref={wrapperRef}
     >
       {label && (
@@ -153,6 +257,7 @@ const SearchDropdown = <T extends Option>({
           {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
+
       <div
         className={`${isOpen ? "active" : ""} search-dropdown-input ${
           disabled ? "disabled" : ""
@@ -175,7 +280,10 @@ const SearchDropdown = <T extends Option>({
             disabled={disabled}
           />
         )}
+
+        {/* ✅ Only X here (as requested) */}
         {selected && !disabled && <X height="16px" onClick={clearSelection} />}
+
         {!disabled && (
           <span className="search-caret">
             {isOpen ? (
@@ -194,33 +302,65 @@ const SearchDropdown = <T extends Option>({
               type="text"
               className="search-dropdown-search"
               placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={actualSearch}
+              onChange={onSearchChange}
               autoFocus
             />
           </div>
 
-          <ul className="search-dropdown-options">
+          <ul
+            className="search-dropdown-options"
+            ref={listRef}
+            onScroll={onScroll}
+            onClick={onOptionClick}
+            style={{ maxHeight: viewportHeight }}
+          >
             {customOption && (
-              <li className="search-dropdown-custom">{customOption}</li>
+              <li
+                className="search-dropdown-custom"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {customOption}
+              </li>
             )}
-            {filteredOptions.length === 0 ? (
-              <li>{noDataMessage || "No matches found"}</li>
-            ) : (
-              filteredOptions.map((opt, idx) => {
-                const key = isObjectMode
-                  ? (opt as itemType).id
-                  : `${opt as string}-${idx}`;
-                const labelText = isObjectMode
-                  ? (opt as itemType).label
-                  : (opt as string);
 
-                return (
-                  <li key={key} onClick={() => selectOption(opt)}>
-                    {labelText}
-                  </li>
-                );
-              })
+            {total === 0 ? (
+              <li>
+                {isLoading
+                  ? loadingMessage || "Loading..."
+                  : noDataMessage || "No matches found"}
+              </li>
+            ) : (
+              <>
+                {topSpacer > 0 && (
+                  <li style={{ height: topSpacer, padding: 0 }} aria-hidden />
+                )}
+
+                {visibleOptions.map((opt, localIdx) => {
+                  const absoluteIdx = startIndex + localIdx;
+
+                  const key = isObjectMode
+                    ? (opt as unknown as itemType).id
+                    : `${opt as unknown as string}-${absoluteIdx}`;
+
+                  const labelText = isObjectMode
+                    ? (opt as unknown as itemType).label
+                    : (opt as unknown as string);
+
+                  return (
+                    <li key={key} data-idx={absoluteIdx}>
+                      {labelText}
+                    </li>
+                  );
+                })}
+
+                {bottomSpacer > 0 && (
+                  <li
+                    style={{ height: bottomSpacer, padding: 0 }}
+                    aria-hidden
+                  />
+                )}
+              </>
             )}
           </ul>
         </div>

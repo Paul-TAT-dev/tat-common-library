@@ -118,3 +118,20 @@
     color: #d3d3d3;
   }
 }
+
+.search-caret {
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.search-dropdown-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 150px; /* safe default; runtime uses inline maxHeight */
+  overflow-y: auto;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
