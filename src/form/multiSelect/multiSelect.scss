@@ -45,6 +45,10 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.25rem;
+
+  .overflow {
+    overflow: auto;
+  }
 }
 
 .multi-select-chip {

@@ -25,6 +25,7 @@ type MultiSelectInputProps<T extends string | OptionObject> = {
   hide?: boolean;
   className?: string;
   required?: boolean;
+  isOverflow?: boolean;
 };
 
 function MultiSelectInput<T extends string | OptionObject>({
@@ -37,6 +38,7 @@ function MultiSelectInput<T extends string | OptionObject>({
   hide,
   className,
   required,
+  isOverflow,
 }: MultiSelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
@@ -65,13 +67,13 @@ function MultiSelectInput<T extends string | OptionObject>({
       const exists = value.some((val) =>
         isObjectMode
           ? (val as OptionObject).id === (option as OptionObject).id
-          : val === option
+          : val === option,
       );
       if (exists) return;
       onChange([...value, option]);
       setFilter("");
     },
-    [value, onChange, isObjectMode]
+    [value, onChange, isObjectMode],
   );
 
   // ✅ Remove option
@@ -80,11 +82,11 @@ function MultiSelectInput<T extends string | OptionObject>({
       const newValue = value.filter((val) =>
         isObjectMode
           ? (val as OptionObject).id !== (option as OptionObject).id
-          : val !== option
+          : val !== option,
       );
       onChange(newValue);
     },
-    [value, onChange, isObjectMode]
+    [value, onChange, isObjectMode],
   );
 
   // ✅ Filtered options
@@ -93,9 +95,9 @@ function MultiSelectInput<T extends string | OptionObject>({
       .filter((opt) =>
         isObjectMode
           ? !value.some(
-              (sel) => (sel as OptionObject).id === (opt as OptionObject).id
+              (sel) => (sel as OptionObject).id === (opt as OptionObject).id,
             )
-          : !value.includes(opt as T)
+          : !value.includes(opt as T),
       )
       .filter((opt) => {
         const label = isObjectMode
@@ -129,7 +131,7 @@ function MultiSelectInput<T extends string | OptionObject>({
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {value.length > 0 && (
-          <div className="multi-select-input">
+          <div className={`multi-select-input ${isOverflow ? "overflow" : ""}`}>
             {value.map((item, index) => {
               const displayLabel = isObjectMode
                 ? (item as OptionObject).label
