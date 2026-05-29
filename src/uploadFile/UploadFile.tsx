@@ -54,24 +54,24 @@ const UploadFile: React.FC<UploadFileProps> = ({ onUploadAccepted }) => {
       }) => (
         <div
           {...getRootProps()}
-          className={`upload-zone ${zoneHover ? "zone-hover" : ""}`}
+          className={`tat-upload ${zoneHover ? "is-dragging" : ""}`}
         >
           {acceptedFile ? (
-            <div className="upload-file">
-              <div className="upload-info">
-                <span className="upload-size">
+            <div className="tat-upload-file">
+              <div className="tat-upload-info">
+                <span className="tat-upload-size">
                   {formatFileSize(acceptedFile.size)}
                 </span>
-                <span className="upload-name">{acceptedFile.name}</span>
+                <span className="tat-upload-name">{acceptedFile.name}</span>
               </div>
 
-              <div className="upload-progress">
+              <div className="tat-upload-progress">
                 <ProgressBar />
               </div>
 
               <div
                 {...getRemoveFileProps()}
-                className="upload-remove"
+                className="tat-upload-remove"
                 onMouseEnter={() =>
                   setRemoveHoverColor(REMOVE_HOVER_COLOR_LIGHT)
                 }

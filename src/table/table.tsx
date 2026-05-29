@@ -2,7 +2,7 @@ import React, { memo, ReactNode, useMemo } from "react";
 
 import { Pagination } from "./pagination";
 
-import "./table.css";
+import "./Table.scss";
 
 export enum PaginationPosition {
   TOP = "top",
@@ -64,7 +64,7 @@ const Table: React.FC<TableProps> = ({
             }}
           />
         )}
-      <table className="table table-striped table-hover my-3">
+      <table className="tat-table table table-striped table-hover my-3">
         <thead className="table-dark">
           <tr>
             {header.map((item, index) => (

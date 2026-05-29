@@ -198,9 +198,9 @@ const DatePicker: FC<DatePickerProps> = ({
   if (hide) return null;
 
   return (
-    <div className={`datepicker-wrapper ${className}`} ref={wrapperRef}>
+    <div className={`tat-datepicker ${className}`} ref={wrapperRef}>
       {label && (
-        <label htmlFor={id} className="datepicker-label">
+        <label htmlFor={id} className="tat-datepicker-label">
           {label} {required && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
@@ -216,12 +216,12 @@ const DatePicker: FC<DatePickerProps> = ({
         onChange={handleManualChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="datepicker-input"
+        className="tat-datepicker-input"
       />
 
       {isOpen && !disabled && (
-        <div className="datepicker-dropdown">
-          <div className="datepicker-header">
+        <div className="tat-datepicker-dropdown">
+          <div className="tat-datepicker-header">
             <button type="button" onMouseDown={prevMonth}>
               &lt;
             </button>
@@ -234,9 +234,9 @@ const DatePicker: FC<DatePickerProps> = ({
             </button>
           </div>
 
-          <div className="datepicker-grid">
+          <div className="tat-datepicker-grid">
             {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-              <div key={`label-${day}`} className="datepicker-day-name">
+              <div key={`label-${day}`} className="tat-datepicker-day-name">
                 {day}
               </div>
             ))}
@@ -251,7 +251,7 @@ const DatePicker: FC<DatePickerProps> = ({
               return (
                 <div
                   key={`daycell-${idx}`}
-                  className={`datepicker-day ${isSelected ? "selected" : ""}`}
+                  className={`tat-datepicker-day ${isSelected ? "is-selected" : ""}`}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => day && handleDayClick(day)}
                 >

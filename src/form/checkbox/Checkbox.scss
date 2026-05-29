@@ -1,0 +1,18 @@
+@use "../../styles/variables" as *;
+
+.tat-checkbox {
+  zoom: 90%;
+
+  .form-check-input,
+  .form-check-label {
+    cursor: pointer;
+  }
+
+  .form-check-input {
+    border: $tat-color-border-hover 1px solid;
+
+    &:hover {
+      border: $tat-color-text-subtle 1px solid;
+    }
+  }
+}

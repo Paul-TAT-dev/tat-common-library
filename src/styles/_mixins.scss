@@ -1,0 +1,59 @@
+// =============================================================================
+// Reusable SCSS mixins — @tat/common-library
+// =============================================================================
+
+@use "./variables" as *;
+
+// The "floating" label sitting on top of the input border.
+// Used by Input, MultiSelect, SearchDropdown, DatePicker, TextArea.
+@mixin tat-floating-label {
+  position: absolute;
+  padding: 0 5px;
+  font-size: $tat-font-size-label;
+  background: $tat-color-surface;
+  top: -8px;
+  left: 5px;
+  z-index: $tat-z-popover;
+  line-height: normal;
+}
+
+// Standard bordered input frame (1px border, rounded, focus ring).
+@mixin tat-field-frame {
+  border: 1px solid $tat-color-border;
+  border-radius: $tat-radius-sm;
+  background: $tat-color-surface;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: $tat-color-border-hover;
+  }
+
+  &.is-active,
+  &:focus-within {
+    border-color: $tat-color-border-focus;
+  }
+}
+
+// Dropdown menu attached underneath a control (multi-select, search-dropdown).
+@mixin tat-attached-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid $tat-color-border;
+  border-top: none;
+  background: $tat-color-surface;
+  z-index: $tat-z-dropdown;
+  border-radius: 0 0 $tat-radius-sm $tat-radius-sm;
+  box-shadow: $tat-shadow-menu;
+}
+
+// Hover/empty styling shared by option list rows.
+@mixin tat-option-row {
+  padding: 5px 5px 5px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: $tat-color-row-hover;
+  }
+}

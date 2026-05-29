@@ -1,50 +1,52 @@
-.credit-card-input-wrapper {
+@use "../styles/variables" as *;
+
+.tat-credit-card {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  font-family: system-ui, sans-serif;
+  gap: $tat-space-xl;
+  font-family: $tat-font-stack;
 
-  .credit-card-label {
+  .tat-credit-card-label {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: $tat-font-size-base;
   }
 
-  .credit-card-fields {
+  .tat-credit-card-fields {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: $tat-space-md;
+  }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
+  .tat-credit-card-field {
+    display: flex;
+    flex-direction: column;
 
-      label {
-        font-size: 0.85rem;
-        margin-bottom: 4px;
-        font-weight: 500;
-      }
-
-      input {
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 8px;
-        font-size: 0.9rem;
-        transition: border-color 0.2s;
-
-        &:focus {
-          border-color: #007bff;
-          outline: none;
-        }
-
-        &:disabled {
-          background: #f9f9f9;
-        }
-      }
+    label {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: 500;
     }
 
-    .input-row {
-      display: flex;
-      gap: 1rem;
+    input {
+      border: 1px solid $tat-color-border;
+      border-radius: $tat-radius-sm;
+      padding: 8px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+
+      &:disabled {
+        background: $tat-color-surface-disabled;
+      }
     }
+  }
+
+  .tat-credit-card-row {
+    display: flex;
+    gap: $tat-space-lg;
   }
 }

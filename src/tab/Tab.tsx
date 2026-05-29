@@ -25,7 +25,7 @@ const Tab: FC<TabProps> = ({
   title,
   disabled = false,
 }) => {
-  const isSelectedClass = isSelected ? "active btnClass" : "border-0";
+  const isSelectedClass = isSelected ? "is-active" : "border-0";
 
   const renderStatusIcon = () => {
     switch (status) {
@@ -48,9 +48,9 @@ const Tab: FC<TabProps> = ({
 
   return (
     <div
-      className={`tat-tab w-100 btn btn-outline-secondary ${isSelectedClass} px-3 px-md-2 py-2 d-flex tat-${status} ${
-        disabled ? "dis" : ""
-      }`}
+      className={`tat-tab w-100 btn btn-outline-secondary ${isSelectedClass} px-3 px-md-2 py-2 d-flex ${
+        status ? `tat-tab-${status}` : ""
+      } ${disabled ? "is-disabled" : ""}`}
       onClick={() => !disabled && onClick()}
       title={title}
     >

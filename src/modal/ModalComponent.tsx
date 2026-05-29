@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { FC, memo, ReactNode } from "react";
 import Modal from "react-modal";
 
-import "./ModalComponent.css";
+import "./ModalComponent.scss";
 
 interface ModalComponentProps {
   modalIsOpen: boolean;
@@ -53,16 +53,16 @@ const ModalComponent: FC<ModalComponentProps> = ({
       onAfterOpen={afterOpenModal}
       contentLabel={title}
       style={customStyles}
-      bodyOpenClassName="modal-open"
+      bodyOpenClassName="tat-modal-open"
     >
-      <div className="modal-content">
-        <div className="modal-header">
-          {customTitle ? customTitle : <h3 className="modal-title">{title}</h3>}
-          <span className="close">
+      <div className="tat-modal-content">
+        <div className="tat-modal-header">
+          {customTitle ? customTitle : <h3 className="tat-modal-title">{title}</h3>}
+          <span className="tat-modal-close">
             <X onClick={closeModal} />
           </span>
         </div>
-        <div className="modal-body">{content}</div>
+        <div className="tat-modal-body">{content}</div>
       </div>
     </Modal>
   );

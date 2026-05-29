@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, memo } from "react";
 
-import "./checkbox.css";
+import "./Checkbox.scss";
 
 interface CheckboxProps {
   id: string;
@@ -16,7 +16,7 @@ const Checkbox: FC<
 > = ({ id, label, isChecked, onChange, hide, className = "", ...props }) => {
   return (
     <div
-      className={`form-floating-sm form-check ${
+      className={`tat-checkbox form-check ${
         hide ? "d-none" : ""
       } ${className}`}
     >

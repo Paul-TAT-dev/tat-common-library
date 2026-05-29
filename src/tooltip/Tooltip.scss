@@ -1,25 +1,29 @@
-#tat-tooltip {
+@use "../styles/variables" as *;
+
+.tat-tooltip {
   .tooltip-inner {
-    background: white;
-    color: black;
-    border: 1px solid black;
+    background: $tat-color-surface;
+    color: #000;
+    border: 1px solid #000;
     max-width: 400px;
     text-align: left;
   }
-  &.inverted {
+
+  &.tat-tooltip-inverted {
     .tooltip-inner {
-      background: black;
-      color: white;
-      border: 1px solid black;
+      background: #000;
+      color: $tat-color-surface;
+      border: 1px solid #000;
       max-width: 400px;
       text-align: left;
     }
   }
 }
-.tooltip-icon {
+
+.tat-tooltip-icon {
   svg {
-    color: #0275ff;
-    fill: #e0f1ff;
+    color: $tat-color-info;
+    fill: $tat-color-info-soft;
     vertical-align: text-top;
   }
 }

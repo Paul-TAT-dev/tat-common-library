@@ -1,54 +1,51 @@
-.datepicker-wrapper {
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+
+.tat-datepicker {
   position: relative;
   display: inline-block;
   width: 100%;
 
-  .datepicker-label {
-    position: absolute;
-    padding: 0 5px;
-    font-size: 10px;
-    background: white;
-    top: -8px;
-    left: 5px;
-    line-height: normal;
+  .tat-datepicker-label {
+    @include tat-floating-label;
   }
 
-  .datepicker-input {
+  .tat-datepicker-input {
     width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid $tat-color-border;
+    border-radius: $tat-radius-sm;
     padding: 5px 5px 5px 10px;
     font-size: 14px;
     cursor: pointer;
-    background: #fff;
+    background: $tat-color-surface;
 
     &:focus {
-      border-color: #005fcc;
+      border-color: $tat-color-border-focus;
       outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 95, 204, 0.1);
+      box-shadow: 0 0 0 2px $tat-color-primary-soft;
     }
   }
 
-  .datepicker-dropdown {
+  .tat-datepicker-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
     margin-top: 4px;
-    border: 1px solid #ccc;
-    background: white;
-    border-radius: 4px;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid $tat-color-border;
+    background: $tat-color-surface;
+    border-radius: $tat-radius-sm;
+    z-index: $tat-z-overlay;
+    box-shadow: $tat-shadow-popup;
     width: 280px;
   }
 
-  .datepicker-header {
+  .tat-datepicker-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
+    background: $tat-color-surface-muted;
+    border-bottom: 1px solid $tat-color-row-divider;
     font-weight: bold;
 
     button {
@@ -58,37 +55,37 @@
       cursor: pointer;
 
       &:hover {
-        color: #005fcc;
+        color: $tat-color-primary;
       }
     }
   }
 
-  .datepicker-grid {
+  .tat-datepicker-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     padding: 8px;
 
-    .datepicker-day-name {
+    .tat-datepicker-day-name {
       font-size: 12px;
       font-weight: bold;
       text-align: center;
       padding: 4px;
-      color: #666;
+      color: $tat-color-text-subtle;
     }
 
-    .datepicker-day {
+    .tat-datepicker-day {
       text-align: center;
       padding: 8px;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: $tat-radius-sm;
 
       &:hover {
-        background: #e0f2fe;
+        background: $tat-color-day-hover;
       }
 
-      &.selected {
-        background: #005fcc;
-        color: white;
+      &.is-selected {
+        background: $tat-color-primary;
+        color: $tat-color-surface;
       }
     }
   }

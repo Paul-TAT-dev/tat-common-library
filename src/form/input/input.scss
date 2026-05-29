@@ -1,63 +1,62 @@
-body {
-  font-size: 1rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
 
 .tat-input-wrapper {
   position: relative;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid $tat-color-border;
+  border-radius: $tat-radius-sm;
+  font-family: $tat-font-stack;
+  font-size: $tat-font-size-base;
 
   input {
     width: 100%;
     padding: 5px 5px 5px 10px;
     border: none !important;
-    border-radius: 4px;
+    border-radius: $tat-radius-sm;
+
     &::placeholder {
-      color: #d3d3d3;
+      color: $tat-color-placeholder;
     }
+
     &:focus {
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      box-shadow: $tat-shadow-focus;
     }
+
     &:focus-visible {
       outline: none;
     }
   }
+
   .tat-input-label {
-    position: absolute;
-    padding: 0 5px;
-    font-size: 10px;
-    background: white;
-    top: -8px;
-    left: 5px;
-    z-index: 100;
-    line-height: normal;
-  }
-  &:hover {
-    border-color: #999;
+    @include tat-floating-label;
   }
 
-  &.error {
-    border-color: #dc3545;
+  &:hover {
+    border-color: $tat-color-border-hover;
+  }
+
+  &.has-error {
+    border-color: $tat-color-danger;
   }
 
   .tat-input-error {
     margin-top: 4px;
     font-size: 12px;
-    color: #dc3545;
+    color: $tat-color-danger;
     position: absolute;
     left: 10px;
-    background: white;
+    background: $tat-color-surface;
     top: 20px;
   }
 
+  // Overrides for react-phone-input-2 (third-party library classes).
   .form-control {
     width: 100% !important;
   }
+
   .flag-dropdown {
     border: none !important;
-    background-color: white !important;
+    background-color: $tat-color-surface !important;
 
     .country-list {
       margin: 0;

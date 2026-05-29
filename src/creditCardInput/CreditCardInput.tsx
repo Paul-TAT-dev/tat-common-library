@@ -125,12 +125,12 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
   };
 
   return (
-    <div className="credit-card-input-wrapper" id={id}>
-      {label && <h5 className="credit-card-label">{label}</h5>}
+    <div className="tat-credit-card" id={id}>
+      {label && <h5 className="tat-credit-card-label">{label}</h5>}
 
-      <div className="credit-card-fields">
+      <div className="tat-credit-card-fields">
         {/* Name */}
-        <div className="input-group">
+        <div className="tat-credit-card-field">
           <label>Name on Credit Card</label>
           <input
             type="text"
@@ -143,7 +143,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
         </div>
 
         {/* Card Number */}
-        <div className="input-group">
+        <div className="tat-credit-card-field">
           <label>Credit Card Number</label>
           <input
             type="tel"
@@ -157,8 +157,8 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
         </div>
 
         {/* Expiry + CVC */}
-        <div className="input-row">
-          <div className="input-group">
+        <div className="tat-credit-card-row">
+          <div className="tat-credit-card-field">
             <label>Expiration Date (MM/YY)</label>
             <input
               type="text"
@@ -172,7 +172,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
           </div>
 
           {showCVC && (
-            <div className="input-group">
+            <div className="tat-credit-card-field">
               <label>CVC</label>
               <input
                 type="text"
@@ -188,7 +188,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
         </div>
 
         {/* Card Type */}
-        <div className="input-group">
+        <div className="tat-credit-card-field">
           <label>Card Type</label>
           <input type="text" value={cardData.type || "Unknown"} disabled />
         </div>

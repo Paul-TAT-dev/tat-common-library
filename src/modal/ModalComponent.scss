@@ -1,0 +1,30 @@
+@use "../styles/variables" as *;
+
+.tat-modal-close {
+  padding: $tat-space-lg;
+  margin: (-$tat-space-lg) (-$tat-space-lg) (-$tat-space-lg) auto;
+  cursor: pointer;
+}
+
+// Applied to <body> while the modal is open (react-modal bodyOpenClassName).
+.tat-modal-open {
+  overflow: hidden;
+}
+
+.tat-modal-content {
+  height: 100%;
+}
+
+.tat-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tat-modal-title {
+  margin: 0;
+}
+
+.tat-modal-body {
+  overflow: auto;
+}

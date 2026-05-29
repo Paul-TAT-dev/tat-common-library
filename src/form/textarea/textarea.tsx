@@ -33,9 +33,9 @@ const TextArea: FC<
   if (hide) return null;
 
   return (
-    <div className={`textarea-wrapper ${className || ""}`}>
+    <div className={`tat-textarea ${className || ""}`}>
       {label && (
-        <label htmlFor={id} className="textarea-label">
+        <label htmlFor={id} className="tat-textarea-label">
           {label} {required && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
@@ -47,7 +47,7 @@ const TextArea: FC<
         required={required}
         disabled={disabled}
         onChange={onChange}
-        className="textarea-field"
+        className="tat-textarea-field"
         {...props}
       />
     </div>

@@ -253,7 +253,7 @@ const SearchDropdown = <T extends Option>({
 
   return (
     <div
-      className={`search-dropdown-wrapper col-12 col-md-12 col-sm-12 ${
+      className={`tat-search-dropdown col-12 col-md-12 col-sm-12 ${
         hide ? "d-none" : ""
       } ${className ?? ""}`}
       ref={wrapperRef}
@@ -265,21 +265,21 @@ const SearchDropdown = <T extends Option>({
       )}
 
       <div
-        className={`${isOpen ? "active" : ""} search-dropdown-input ${
-          disabled ? "disabled" : ""
+        className={`tat-search-dropdown-control ${isOpen ? "is-open" : ""} ${
+          disabled ? "is-disabled" : ""
         }`}
         onClick={toggleDropdown}
         tabIndex={0}
       >
         {isLoading ? (
-          <span className="search-loading">
+          <span className="tat-search-dropdown-loading">
             {loadingMessage || "Loading..."}
           </span>
         ) : (
           <input
             id={id}
             type="text"
-            className="search-selected-value"
+            className="tat-search-dropdown-value"
             value={displayLabel}
             placeholder={placeholder}
             readOnly
@@ -290,7 +290,7 @@ const SearchDropdown = <T extends Option>({
         {selected && !disabled && <X height="16px" onClick={clearSelection} />}
 
         {!disabled && (
-          <span className="search-caret">
+          <span className="tat-search-dropdown-caret">
             {isOpen ? (
               <ChevronUp height="16px" />
             ) : (
@@ -301,11 +301,11 @@ const SearchDropdown = <T extends Option>({
       </div>
 
       {isOpen && (
-        <div className="search-dropdown-menu">
-          <div className="search-selected-wrapper">
+        <div className="tat-search-dropdown-menu">
+          <div className="tat-search-dropdown-search-wrapper">
             <input
               type="text"
-              className="search-dropdown-search"
+              className="tat-search-dropdown-search"
               placeholder="Search..."
               value={actualSearch}
               onChange={onSearchChange}
@@ -314,7 +314,7 @@ const SearchDropdown = <T extends Option>({
           </div>
 
           <ul
-            className="search-dropdown-options"
+            className="tat-search-dropdown-options"
             ref={listRef}
             onScroll={onScroll}
             onClick={onOptionClick}
@@ -322,7 +322,7 @@ const SearchDropdown = <T extends Option>({
           >
             {customOption && (
               <li
-                className="search-dropdown-custom"
+                className="tat-search-dropdown-custom"
                 onClick={(e) => e.stopPropagation()}
               >
                 {customOption}
@@ -330,7 +330,7 @@ const SearchDropdown = <T extends Option>({
             )}
 
             {total === 0 ? (
-              <li className="search-dropdown-empty">
+              <li className="tat-search-dropdown-empty">
                 {isLoading
                   ? loadingMessage || "Loading..."
                   : noDataMessage || "No matches found"}

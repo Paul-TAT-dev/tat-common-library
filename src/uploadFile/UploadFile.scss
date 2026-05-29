@@ -1,11 +1,12 @@
-$grey: #ccc;
-$grey-light: rgba(255, 255, 255, 0.4);
-$grey-dim: #686868;
+@use "../styles/variables" as *;
 
-.upload-zone {
+$tat-upload-translucent: rgba(255, 255, 255, 0.4);
+$tat-upload-border-hover: #686868;
+
+.tat-upload {
   align-items: center;
-  border: 2px dashed $grey;
-  border-radius: 20px;
+  border: 2px dashed $tat-color-border;
+  border-radius: $tat-radius-lg;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -14,32 +15,32 @@ $grey-dim: #686868;
   text-align: center;
   transition: border-color 0.3s ease;
 
-  &.zone-hover {
-    border-color: $grey-dim;
+  &.is-dragging {
+    border-color: $tat-upload-border-hover;
   }
 }
 
-.upload-file {
+.tat-upload-file {
   background: linear-gradient(to bottom, #eee, #ddd);
-  border-radius: 20px;
+  border-radius: $tat-radius-lg;
   display: flex;
   height: 120px;
   width: 120px;
   position: relative;
-  z-index: 10;
+  z-index: $tat-z-dropdown;
   flex-direction: column;
   justify-content: center;
 }
 
-.upload-info {
+.tat-upload-info {
   align-items: center;
   display: flex;
   flex-direction: column;
   padding: 0 10px;
 }
 
-.upload-size {
-  background-color: $grey-light;
+.tat-upload-size {
+  background-color: $tat-upload-translucent;
   border-radius: 3px;
   margin-bottom: 0.5em;
   justify-content: center;
@@ -47,8 +48,8 @@ $grey-dim: #686868;
   font-size: 0.85rem;
 }
 
-.upload-name {
-  background-color: $grey-light;
+.tat-upload-name {
+  background-color: $tat-upload-translucent;
   border-radius: 3px;
   font-size: 12px;
   margin-bottom: 0.5em;
@@ -56,14 +57,14 @@ $grey-dim: #686868;
   text-align: center;
 }
 
-.upload-progress {
+.tat-upload-progress {
   bottom: 14px;
   position: absolute;
   width: 100%;
   padding: 0 10px;
 }
 
-.upload-remove {
+.tat-upload-remove {
   height: 23px;
   position: absolute;
   right: 6px;

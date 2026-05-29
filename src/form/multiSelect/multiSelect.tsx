@@ -117,7 +117,7 @@ function MultiSelectInput<T extends string | OptionObject>({
 
   return (
     <div
-      className={`multi-select-wrapper ${hide ? "d-none" : ""} ${className}`}
+      className={`tat-multi-select ${hide ? "d-none" : ""} ${className}`}
       ref={wrapperRef}
     >
       {label && (
@@ -127,11 +127,11 @@ function MultiSelectInput<T extends string | OptionObject>({
       )}
 
       <div
-        className={`multi-select-default ${isOpen ? "active" : ""}`}
+        className={`tat-multi-select-control ${isOpen ? "is-open" : ""}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {value.length > 0 && (
-          <div className={`multi-select-input ${isOverflow ? "overflow" : ""}`}>
+          <div className={`tat-multi-select-values ${isOverflow ? "is-overflow" : ""}`}>
             {value.map((item, index) => {
               const displayLabel = isObjectMode
                 ? (item as OptionObject).label
@@ -140,14 +140,14 @@ function MultiSelectInput<T extends string | OptionObject>({
                 ? (item as OptionObject).id
                 : `${item}-${index}`;
               return (
-                <span key={key} className="multi-select-chip">
+                <span key={key} className="tat-multi-select-chip">
                   <X
                     height="14px"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemove(item);
                     }}
-                    className="chip-remove"
+                    className="tat-multi-select-chip-remove"
                   />
                   {displayLabel}
                 </span>
@@ -157,20 +157,20 @@ function MultiSelectInput<T extends string | OptionObject>({
         )}
 
         {value.length === 0 && (
-          <span className="multi-select-placeholder">{placeholder}</span>
+          <span className="tat-multi-select-placeholder">{placeholder}</span>
         )}
 
-        <span className="caret">
+        <span className="tat-multi-select-caret">
           {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </span>
       </div>
 
       {isOpen && (
-        <div className="multi-select-dropdown">
-          <div className="search-selected-wrapper">
+        <div className="tat-multi-select-menu">
+          <div className="tat-multi-select-search-wrapper">
             <input
               type="text"
-              className="multi-select-search"
+              className="tat-multi-select-search"
               placeholder="Search..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -178,7 +178,7 @@ function MultiSelectInput<T extends string | OptionObject>({
               autoFocus
             />
           </div>
-          <ul className="multi-select-options">
+          <ul className="tat-multi-select-options">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt, index) => {
                 const displayLabel = isObjectMode
@@ -194,7 +194,7 @@ function MultiSelectInput<T extends string | OptionObject>({
                 );
               })
             ) : (
-              <li className="empty">No matches found</li>
+              <li className="tat-multi-select-empty">No matches found</li>
             )}
           </ul>
         </div>

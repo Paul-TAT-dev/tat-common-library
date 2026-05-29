@@ -1,55 +1,58 @@
+@use "../styles/variables" as *;
+
 .tat-tab {
   label {
     cursor: pointer;
   }
-  &.dis {
+
+  &.is-disabled {
     cursor: not-allowed;
+
     label {
       cursor: not-allowed;
     }
   }
-  &.tat-success {
-    color: #00ad5a;
-    &.active {
-      background-color: #00ad5a;
-      color: #fff;
-      border: 1px solid #2b8058;
+
+  &.tat-tab-success {
+    color: $tat-color-success;
+
+    &.is-active {
+      background-color: $tat-color-success;
+      color: $tat-color-surface;
+      border: 1px solid $tat-color-success-active;
     }
+
     &:hover {
-      color: #fff;
+      color: $tat-color-surface;
     }
   }
-  &.tat-alert {
-    color: #f03e3e;
-    &.active {
-      background-color: #f03e3e;
-      color: #fff;
-      border: 1px solid #a43e3a;
+
+  &.tat-tab-alert,
+  &.tat-tab-error {
+    color: $tat-color-error;
+
+    &.is-active {
+      background-color: $tat-color-error;
+      color: $tat-color-surface;
+      border: 1px solid $tat-color-error-active;
     }
+
     &:hover {
-      color: #fff;
+      color: $tat-color-surface;
     }
   }
-  &.tat-error {
-    color: #f03e3e;
-    &.active {
-      background-color: #f03e3e;
-      color: #fff;
-      border: 1px solid #a43e3a;
-    }
-    &:hover {
-      color: #fff;
-    }
-  }
-  &.tat-todo {
-    color: #6c757d;
-    &.active {
-      background-color: #6c757d;
-      color: #fff;
+
+  &.tat-tab-todo {
+    color: $tat-color-text-muted;
+
+    &.is-active {
+      background-color: $tat-color-text-muted;
+      color: $tat-color-surface;
       border: 1px solid #495057;
     }
+
     &:hover {
-      color: #fff;
+      color: $tat-color-surface;
     }
   }
 }

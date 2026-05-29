@@ -118,7 +118,7 @@ const Input: FC<InputProps> = ({
     <div
       className={`tat-input-wrapper ${hide ? "d-none" : ""} ${
         className || ""
-      } ${error ? "error" : ""}`}
+      } ${error ? "has-error" : ""}`}
     >
       {label && (
         <label className="tat-input-label" htmlFor={id}>

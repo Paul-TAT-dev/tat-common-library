@@ -82,16 +82,16 @@ const Tooltip: FC<TooltipProps> = ({
         onMouseEnter={handleOnMouseEnter}
         onMouseLeave={handleOnMouseLeave}
         onClick={handleOnMouseEnter}
-        className={`tooltip-icon ${className}`}
+        className={`tat-tooltip-icon ${className}`}
       >
         {icon}
       </span>
       <Overlay target={targetRef.current} placement={placement} show={isShow}>
         {(props) => (
           <BTooltip
-            id="tat-tooltip"
+            id={id || "tat-tooltip"}
             {...props}
-            className={inverted ? "inverted" : ""}
+            className={`tat-tooltip ${inverted ? "tat-tooltip-inverted" : ""}`}
           >
             <span>{tip}</span>
           </BTooltip>

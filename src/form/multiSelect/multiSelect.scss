@@ -1,124 +1,111 @@
-.multi-select-wrapper {
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.tat-multi-select {
   position: relative;
   width: 100%;
   height: 100%;
-  font-family: sans-serif;
+  font-family: $tat-font-stack;
   cursor: text;
 
   .tat-input-label {
-    position: absolute;
-    padding: 0 5px;
-    font-size: 10px;
-    background: white;
-    top: -8px;
-    left: 5px;
-    line-height: normal;
-  }
-}
-
-.multi-select-default {
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid #ccc;
-  padding: 5px 5px 5px 10px;
-  border-radius: 4px;
-  background: white;
-  cursor: text;
-
-  &:hover {
-    border-color: #999;
+    @include tat-floating-label;
   }
 
-  &.active {
-    border-color: #005fcc;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-
-  .multi-select-placeholder {
-    color: #d4d4d4;
-  }
-}
-
-.multi-select-input {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-
-  &.overflow {
-    overflow: auto;
-  }
-}
-
-.multi-select-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  background-color: #dbeafe;
-  color: #1d4ed8;
-  padding: 0rem 0.5rem 0rem 0rem;
-  font-size: 0.875rem;
-  border: 1px solid #1d4ed8;
-  border-radius: 8px;
-  cursor: default;
-
-  .chip-remove {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    color: #ef4444;
+  .tat-multi-select-control {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid $tat-color-border;
+    padding: 5px 5px 5px 10px;
+    border-radius: $tat-radius-sm;
+    background: $tat-color-surface;
+    cursor: text;
 
     &:hover {
-      color: #b91c1c;
+      border-color: $tat-color-border-hover;
     }
-  }
-}
 
-.multi-select-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-top: none;
-  background: white;
-  z-index: 10;
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    &.is-open {
+      border-color: $tat-color-border-focus;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
 
-  .multi-select-search {
-    width: 100%;
-    padding: 5px 5px 5px 10px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    box-sizing: border-box;
-
-    &::placeholder {
-      color: #d3d3d3;
+    .tat-multi-select-placeholder {
+      color: $tat-color-placeholder;
     }
   }
 
-  .multi-select-options {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 150px;
-    overflow-y: auto;
+  .tat-multi-select-values {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $tat-space-xs;
 
-    li {
-      padding: 5px 5px 5px 10px;
+    &.is-overflow {
+      overflow: auto;
+    }
+  }
+
+  .tat-multi-select-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $tat-space-xs;
+    background-color: $tat-color-chip-bg;
+    color: $tat-color-chip-text;
+    padding: 0 $tat-space-sm 0 0;
+    font-size: $tat-font-size-sm;
+    border: 1px solid $tat-color-chip-text;
+    border-radius: $tat-radius-md;
+    cursor: default;
+
+    .tat-multi-select-chip-remove {
+      display: inline-flex;
+      align-items: center;
       cursor: pointer;
+      color: $tat-color-chip-remove;
 
       &:hover {
-        background: #f0f0f0;
+        color: $tat-color-chip-remove-hover;
+      }
+    }
+  }
+
+  .tat-multi-select-menu {
+    @include tat-attached-menu;
+
+    .tat-multi-select-search {
+      width: 100%;
+      padding: 5px 5px 5px 10px;
+      border: none;
+      border-bottom: 1px solid $tat-color-row-divider;
+      box-sizing: border-box;
+
+      &::placeholder {
+        color: $tat-color-placeholder;
       }
     }
 
-    .empty {
-      padding: 5px 5px 5px 10px;
-      color: #6b7280;
-      font-style: italic;
+    .tat-multi-select-options {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 150px;
+      overflow-y: auto;
+
+      li {
+        @include tat-option-row;
+      }
+
+      .tat-multi-select-empty {
+        padding: 5px 5px 5px 10px;
+        color: $tat-color-text-muted;
+        font-style: italic;
+      }
     }
+  }
+
+  .tat-multi-select-caret {
+    margin-left: 8px;
   }
 }
