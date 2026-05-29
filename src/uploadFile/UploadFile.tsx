@@ -13,7 +13,11 @@ const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
   40
 );
 
-const UploadFile: React.FC = () => {
+interface UploadFileProps {
+  onUploadAccepted?: (results: unknown) => void;
+}
+
+const UploadFile: React.FC<UploadFileProps> = ({ onUploadAccepted }) => {
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
   const [removeHoverColor, setRemoveHoverColor] = useState(
@@ -22,8 +26,8 @@ const UploadFile: React.FC = () => {
 
   return (
     <CSVReader
-      onUploadAccepted={(results: any) => {
-        console.log("File uploaded:", results);
+      onUploadAccepted={(results: unknown) => {
+        onUploadAccepted?.(results);
         setZoneHover(false);
       }}
       onDragOver={(event: React.DragEvent<HTMLDivElement>) => {

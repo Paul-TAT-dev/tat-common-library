@@ -46,7 +46,7 @@
   flex-wrap: wrap;
   gap: 0.25rem;
 
-  .overflow {
+  &.overflow {
     overflow: auto;
   }
 }

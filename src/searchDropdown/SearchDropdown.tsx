@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -6,8 +7,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+
 import "./SearchDropdown.scss";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 export interface itemType {
   id: string;
@@ -136,11 +137,11 @@ const SearchDropdown = <T extends Option>({
 
     if (isObjectMode) {
       return uniqueOptions.filter((opt) =>
-        ((opt as unknown as itemType).label || "").toLowerCase().includes(q)
+        ((opt as unknown as itemType).label || "").toLowerCase().includes(q),
       );
     }
     return uniqueOptions.filter((opt) =>
-      (opt as unknown as string).toLowerCase().includes(q)
+      (opt as unknown as string).toLowerCase().includes(q),
     );
   }, [serverSide, uniqueOptions, actualSearch, isObjectMode]);
 
@@ -164,22 +165,19 @@ const SearchDropdown = <T extends Option>({
       if (onSearchValueChange) onSearchValueChange(next);
       else setLocalSearch(next);
     },
-    [onSearchValueChange]
+    [onSearchValueChange],
   );
 
-  // ✅ Clicking X should show ALL cached options:
-  // We do that by setting search = "" (Vendor will immediately swap in cached[""] options)
   const clearSelection = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       onChange(id, null);
-      setSearchValueSafe(""); // <- triggers "show all cached"
-      setIsOpen(true); // keep open so user sees list
-      // optional: scroll to top
+      setSearchValueSafe("");
+      setIsOpen(true);
       const node = listRef.current;
       if (node) node.scrollTop = 0;
     },
-    [id, onChange, setSearchValueSafe]
+    [id, onChange, setSearchValueSafe],
   );
 
   const onSearchChange = useCallback(
@@ -187,7 +185,7 @@ const SearchDropdown = <T extends Option>({
       setSearchValueSafe(e.target.value);
       if (!disabled && !isLoading) setIsOpen(true);
     },
-    [setSearchValueSafe, disabled, isLoading]
+    [setSearchValueSafe, disabled, isLoading],
   );
 
   // Virtualization
@@ -207,7 +205,15 @@ const SearchDropdown = <T extends Option>({
   }, [onEndReached, endReachedThresholdPx]);
 
   const total = shownOptions.length;
-  const viewportHeight = Math.min(maxMenuHeight, total * itemHeight);
+  // FIX: always reserve at least one row of height. The previous formula
+  // `Math.min(maxMenuHeight, total * itemHeight)` collapsed to 0 when there
+  // were no options, which clipped the empty-state / loading <li> because
+  // the SCSS sets overflow-y: auto. With Math.max(itemHeight, ...) the
+  // empty/loading message is always visible.
+  const viewportHeight = Math.max(
+    itemHeight,
+    Math.min(maxMenuHeight, total * itemHeight),
+  );
   const overscan = 6;
 
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
@@ -216,7 +222,7 @@ const SearchDropdown = <T extends Option>({
 
   const visibleOptions = useMemo(
     () => shownOptions.slice(startIndex, endIndex),
-    [shownOptions, startIndex, endIndex]
+    [shownOptions, startIndex, endIndex],
   );
 
   const topSpacer = startIndex * itemHeight;
@@ -235,7 +241,7 @@ const SearchDropdown = <T extends Option>({
       onChange(id, opt);
       setIsOpen(false);
     },
-    [shownOptions, id, onChange]
+    [shownOptions, id, onChange],
   );
 
   useLayoutEffect(() => {
@@ -281,7 +287,6 @@ const SearchDropdown = <T extends Option>({
           />
         )}
 
-        {/* ✅ Only X here (as requested) */}
         {selected && !disabled && <X height="16px" onClick={clearSelection} />}
 
         {!disabled && (
@@ -325,7 +330,7 @@ const SearchDropdown = <T extends Option>({
             )}
 
             {total === 0 ? (
-              <li>
+              <li className="search-dropdown-empty">
                 {isLoading
                   ? loadingMessage || "Loading..."
                   : noDataMessage || "No matches found"}

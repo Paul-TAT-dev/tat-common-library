@@ -88,6 +88,8 @@
   padding: 0;
   max-height: 150px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .search-dropdown-options li {
@@ -95,6 +97,15 @@
   cursor: pointer;
   &:hover {
     background: #f0f0f0;
+  }
+}
+
+.search-dropdown-empty {
+  color: #888;
+  cursor: default;
+  text-align: center;
+  &:hover {
+    background: transparent;
   }
 }
 
@@ -123,15 +134,4 @@
   margin-left: 8px;
   display: inline-flex;
   align-items: center;
-}
-
-.search-dropdown-options {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 150px; /* safe default; runtime uses inline maxHeight */
-  overflow-y: auto;
-
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 }

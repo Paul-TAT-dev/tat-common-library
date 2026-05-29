@@ -9,3 +9,4 @@ export * from "./searchDropdown";
 export * from "./tab";
 export * from "./table";
 export * from "./tooltip";
+export * from "./uploadFile";

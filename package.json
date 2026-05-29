@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && copyfiles -u 1 \"src/**/*.scss\" dist && copyfiles -u 1 \"src/**/*.css\" dist",
+    "build": "tsc -p tsconfig.build.json && copyfiles -u 1 -e \"src/stories/**\" \"src/**/*.scss\" dist && copyfiles -u 1 -e \"src/stories/**\" \"src/**/*.css\" dist",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "storybook:deploy": "gh-pages -d storybook-static"
@@ -41,9 +41,7 @@
   "dependencies": {
     "bootstrap": "^5.3.7",
     "date-fns": "^4.1.0",
-    "react": "^19.1.0",
     "react-credit-cards-2": "^1.0.3",
-    "react-dom": "^19.1.0",
     "react-modal": "^3.16.3",
     "react-number-format": "^5.4.4",
     "react-papaparse": "^4.4.0",

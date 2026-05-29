@@ -1,4 +1,4 @@
-import React, { memo, ReactNode, useEffect, useState } from "react";
+import React, { memo, ReactNode, useMemo } from "react";
 
 import { Pagination } from "./pagination";
 
@@ -39,22 +39,14 @@ const Table: React.FC<TableProps> = ({
   paginationPosition = PaginationPosition.BOTTOM,
   noDataMessage = "No data found",
 }) => {
-  const [filteredData, setFilteredData] = useState(data);
-
-  const updateData = (pNumber: number, iPerPage: number) => {
-    if (process.env.NODE_ENV === "development") {
-      const startIndex = (pNumber - 1) * iPerPage;
-      const endIndex = startIndex + iPerPage;
-      const paginatedItems = data.slice(startIndex, endIndex);
-      setFilteredData(paginatedItems);
-    } else {
-      setFilteredData(data);
-    }
-  };
-
-  useEffect(() => {
-    updateData(currentPage, itemsPerPage);
-  }, [data]);
+  // Derived view: if totalPages is provided (server-side pagination), trust
+  // the parent and show `data` as-is. Otherwise slice client-side.
+  const isServerPaginated = totalPages > 0 && totalPages !== data.length;
+  const filteredData = useMemo(() => {
+    if (isServerPaginated) return data;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return data.slice(startIndex, startIndex + itemsPerPage);
+  }, [data, currentPage, itemsPerPage, isServerPaginated]);
 
   return (
     <div>
@@ -67,8 +59,8 @@ const Table: React.FC<TableProps> = ({
             setItemsPerPage={setItemsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            onPageChange={(p, i) => {
-              updateData(p, i);
+            onPageChange={() => {
+              /* page state is owned by parent; slicing reacts via useMemo */
             }}
           />
         )}
@@ -84,10 +76,10 @@ const Table: React.FC<TableProps> = ({
         </thead>
         <tbody>
           {filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
-              <tr key={index}>
-                {item.map((item, index) => (
-                  <td key={index}>{item}</td>
+            filteredData.map((row, rowIdx) => (
+              <tr key={rowIdx}>
+                {row.map((cell, cellIdx) => (
+                  <td key={cellIdx}>{cell}</td>
                 ))}
               </tr>
             ))
@@ -108,8 +100,8 @@ const Table: React.FC<TableProps> = ({
             setItemsPerPage={setItemsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            onPageChange={(p, i) => {
-              updateData(p, i);
+            onPageChange={() => {
+              /* page state is owned by parent; slicing reacts via useMemo */
             }}
           />
         )}

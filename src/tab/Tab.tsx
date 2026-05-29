@@ -7,7 +7,6 @@ import {
 import { FC, memo } from "react";
 
 import "./Tab.scss";
-import { title } from "process";
 
 interface TabProps {
   value: string;
