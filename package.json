@@ -1,6 +1,6 @@
 {
   "name": "@tat/common-library",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -8,6 +8,10 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && copyfiles -u 1 -e \"src/stories/**\" \"src/**/*.scss\" dist && copyfiles -u 1 -e \"src/stories/**\" \"src/**/*.css\" dist",
+    "version:patch": "node scripts/bump-version.js patch",
+    "version:minor": "node scripts/bump-version.js minor",
+    "version:major": "node scripts/bump-version.js major",
+    "prepack": "node scripts/bump-version.js && yarn build",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "storybook:deploy": "gh-pages -d storybook-static"
