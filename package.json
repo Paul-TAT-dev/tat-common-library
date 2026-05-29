@@ -3,6 +3,22 @@
   "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles": {
+      "types": "./dist/styles.d.ts",
+      "default": "./dist/styles.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "./dist/styles.js"
+  ],
   "files": [
     "dist"
   ],
@@ -11,7 +27,7 @@
     "version:patch": "node scripts/bump-version.js patch",
     "version:minor": "node scripts/bump-version.js minor",
     "version:major": "node scripts/bump-version.js major",
-    "prepack": "node scripts/bump-version.js && yarn build",
+    "prepack": "node scripts/bump-version.js && npm run build",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "storybook:deploy": "gh-pages -d storybook-static"
@@ -23,7 +39,6 @@
   },
   "devDependencies": {
     "@storybook/addon-docs": "^9.0.17",
-    "@storybook/addon-onboarding": "^9.0.17",
     "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
     "@storybook/react-webpack5": "^9.0.17",
     "@types/node": "^24.0.14",
@@ -35,7 +50,7 @@
     "gh-pages": "^6.3.0",
     "lucide-react": "^0.525.0",
     "react-bootstrap": "^2.10.10",
-    "sass": "^1.89.2",
+    "sass": "~1.89.2",
     "sass-loader": "^16.0.5",
     "storybook": "^9.0.17",
     "style-loader": "^4.0.0",
@@ -53,5 +68,11 @@
   "peerDependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
+  },
+  "resolutions": {
+    "sass": "1.89.2"
+  },
+  "engines": {
+    "node": ">=20.11.0"
   }
 }

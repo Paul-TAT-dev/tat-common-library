@@ -19,7 +19,13 @@ export interface HeaderProps {
 interface TableProps {
   header: HeaderProps[];
   data: ReactNode[][];
-  totalPages?: number;
+  /**
+   * Total row count across all pages. Used by the pagination control to
+   * compute the number of page buttons. When this value is greater than the
+   * length of `data`, the table assumes the parent is server-paginating and
+   * shows `data` as-is instead of slicing client-side.
+   */
+  totalItems?: number;
   itemsPerPage: number;
   setItemsPerPage: (itemsPerPage: number) => void;
   currentPage: number;
@@ -31,7 +37,7 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({
   header,
   data,
-  totalPages = 1,
+  totalItems = 0,
   itemsPerPage = 10,
   setItemsPerPage,
   currentPage = 1,
@@ -39,14 +45,17 @@ const Table: React.FC<TableProps> = ({
   paginationPosition = PaginationPosition.BOTTOM,
   noDataMessage = "No data found",
 }) => {
-  // Derived view: if totalPages is provided (server-side pagination), trust
-  // the parent and show `data` as-is. Otherwise slice client-side.
-  const isServerPaginated = totalPages > 0 && totalPages !== data.length;
+  // If totalItems exceeds the rows the parent gave us, the parent is doing
+  // server-side pagination — trust their slice. Otherwise paginate client-side.
+  const isServerPaginated = totalItems > 0 && totalItems !== data.length;
   const filteredData = useMemo(() => {
     if (isServerPaginated) return data;
     const startIndex = (currentPage - 1) * itemsPerPage;
     return data.slice(startIndex, startIndex + itemsPerPage);
   }, [data, currentPage, itemsPerPage, isServerPaginated]);
+
+  // Pagination expects the total number of rows so it can compute pages.
+  const paginationTotal = totalItems || data.length;
 
   return (
     <div>
@@ -54,7 +63,7 @@ const Table: React.FC<TableProps> = ({
         paginationPosition === PaginationPosition.BOTH) &&
         filteredData.length > 0 && (
           <Pagination
-            totalItems={totalPages}
+            totalItems={paginationTotal}
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}
             currentPage={currentPage}
@@ -95,7 +104,7 @@ const Table: React.FC<TableProps> = ({
         paginationPosition === PaginationPosition.BOTH) &&
         filteredData.length > 0 && (
           <Pagination
-            totalItems={totalPages}
+            totalItems={paginationTotal}
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}
             currentPage={currentPage}

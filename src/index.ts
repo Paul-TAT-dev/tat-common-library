@@ -1,5 +1,7 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+// Bootstrap CSS/JS is no longer imported here automatically — consumers
+// must opt in with `import "@tat/common-library/styles";` once at the root
+// of their app. This avoids forcing ~250 KB of Bootstrap on consumers that
+// already have it (duplicated) or don't want it.
 
 export * from "./creditCardInput";
 export * from "./datePicker";

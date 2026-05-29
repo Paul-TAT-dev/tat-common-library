@@ -49,3 +49,11 @@ yarn version:major
    ```
    npm i
    ```
+5. **Import the stylesheet once** at the root of your app (e.g. in
+   `src/main.tsx` or `App.tsx`):
+   ```ts
+   import "@tat/common-library/styles";
+   ```
+   This pulls in Bootstrap CSS + JS, which the library's components rely on
+   for utility classes (`btn`, `d-flex`, `table-striped`, etc.). Skip this
+   step only if your app already imports Bootstrap somewhere else.

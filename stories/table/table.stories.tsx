@@ -16,7 +16,7 @@ export const Default: Story = {
       [1, "John Doe", "2L2e0@example.com"],
       [2, "Jane Doe", "K2L2e0@example.com"],
     ],
-    totalPages: 1,
+    totalItems: 2,
     itemsPerPage: 10,
     setItemsPerPage: () => {},
     currentPage: 1,
