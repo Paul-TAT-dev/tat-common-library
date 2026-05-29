@@ -42,7 +42,7 @@ const Pagination: FC<PaginationProps> = ({
     }
 
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  }, [totalItems, itemsPerPage]);
+  }, [currentPage, totalPages]);
 
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);

@@ -1,6 +1,7 @@
 import React, { FC, memo, ReactNode, useEffect, useRef, useState } from "react";
 import { Tooltip as BTooltip, Overlay } from "react-bootstrap";
 
+import { useClickOutside } from "../hooks";
 import "./Tooltip.scss";
 
 interface TooltipProps {
@@ -38,7 +39,7 @@ const Tooltip: FC<TooltipProps> = ({
     if (isControllable) {
       setIsShow(controlShow || false);
     }
-  }, [controlShow]);
+  }, [controlShow, isControllable]);
 
   const handleOnMouseEnter = () => {
     if (isControllable) {
@@ -54,26 +55,13 @@ const Tooltip: FC<TooltipProps> = ({
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        targetRef.current &&
-        !targetRef.current.contains(event.target as Node)
-      ) {
-        if (isControllable) {
-          setControlShow && setControlShow("");
-        } else {
-          setIsShow(false);
-        }
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isControllable, setControlShow]);
+  useClickOutside(targetRef, () => {
+    if (isControllable) {
+      setControlShow?.("");
+    } else {
+      setIsShow(false);
+    }
+  });
 
   return (
     <>

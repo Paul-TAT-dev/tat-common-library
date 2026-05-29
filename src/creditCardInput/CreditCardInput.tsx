@@ -1,6 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Cards from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
+import { detectCardType, formatExpiry } from "../utils";
 import "./CreditCardInput.scss";
 
 export interface CreditCardData {
@@ -20,71 +21,7 @@ interface CreditCardInputProps {
   showCVC?: boolean;
 }
 
-/** ✅ Detects card type from number */
-const detectCardType = (number: string): string | undefined => {
-  const cleaned = number.replace(/\D/g, "");
-
-  if (/^3[47][0-9]{0,13}$/.test(cleaned)) return "American Express";
-  if (/^3(?:0[0-5]|[68][0-9])[0-9]{0,11}$/.test(cleaned)) return "Diners Club";
-  if (/^6(?:011|5[0-9]{2})[0-9]{0,12}$/.test(cleaned)) return "Discover";
-  if (/^63[7-9][0-9]{0,13}$/.test(cleaned)) return "InstaPayment";
-  if (/^(?:2131|1800|35\d{0,3})\d{0,11}$/.test(cleaned)) return "JCB";
-  if (/^(6304|6706|6709|6771)[0-9]{0,15}$/.test(cleaned)) return "Laser";
-  if (
-    /^(5018|5020|5038|6304|6759|676[1-3]|0604|6390)[0-9]{0,15}$/.test(cleaned)
-  )
-    return "Maestro";
-  if (
-    /^(5[1-5][0-9]{0,14}|2(2[2-9][0-9]{0,12}|[3-6][0-9]{0,13}|7[01][0-9]{0,12}|720[0-9]{0,12}))$/.test(
-      cleaned
-    )
-  )
-    return "MasterCard";
-  if (/^4[0-9]{0,15}$/.test(cleaned)) return "Visa";
-
-  return undefined;
-};
-
-/** ✅ Formats expiry as MM/YY (smooth typing + backspace through slash) */
-const formatExpiry = (input: string, prev: string): string => {
-  const digits = input.replace(/\D/g, "");
-  const prevDigits = prev.replace(/\D/g, "");
-  const isDeleting = digits.length < prevDigits.length;
-
-  // Allow clear
-  if (!digits) return "";
-
-  // --- Handle deletion ---
-  if (isDeleting) {
-    // Remove slash cleanly (e.g. "03/" → "03")
-    if (prev.endsWith("/") && digits.length === 2) return digits;
-    // Deleting month or year
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 4)
-      return `${digits.substring(0, 2)}/${digits.substring(2, 4)}`;
-  }
-
-  // --- Handle typing ---
-  // Single-digit month
-  if (digits.length === 1) {
-    const first = parseInt(digits, 10);
-    if (first > 1 && first <= 9) return `0${first}/`;
-    return digits;
-  }
-
-  // Two digits (month)
-  if (digits.length === 2) {
-    let month = parseInt(digits, 10);
-    if (month === 0) return "";
-    if (month > 12) month = 12;
-    return `${month.toString().padStart(2, "0")}/`;
-  }
-
-  // Full MMYY
-  const month = digits.substring(0, 2);
-  const year = digits.substring(2, 4);
-  return `${month}/${year}`;
-};
+type CardFocus = "name" | "number" | "expiry" | "cvc";
 
 const CreditCardInput: FC<CreditCardInputProps> = ({
   id,
@@ -94,7 +31,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
   disabled = false,
   showCVC = true,
 }) => {
-  const [focus, setFocus] = useState<keyof CreditCardData | undefined>();
+  const [focus, setFocus] = useState<CardFocus | undefined>();
   const [cardData, setCardData] = useState<CreditCardData>({
     name: value?.name || "",
     number: value?.number || "",
@@ -198,7 +135,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
           name={cardData.name}
           expiry={cardData.expiry}
           cvc={cardData.cvc || ""}
-          focused={focus as any}
+          focused={focus}
           placeholders={{ name: "FULL NAME" }}
         />
       </div>

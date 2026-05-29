@@ -1,21 +1,20 @@
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import React, {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 
+import { useClickOutside } from "../hooks";
+import { OptionObject } from "../types";
 import "./SearchDropdown.scss";
 
-export interface itemType {
-  id: string;
-  label: string;
-}
+/** @deprecated Use `OptionObject` from `@tat/common-library`. */
+export type itemType = OptionObject;
 
-type Option = string | itemType;
+type Option = string | OptionObject;
 
 interface Props<T extends Option> {
   id: string;
@@ -44,9 +43,12 @@ interface Props<T extends Option> {
   maxMenuHeight?: number;
 }
 
-function isItemType(x: unknown): x is itemType {
+function isOptionObject(x: unknown): x is OptionObject {
   return (
-    !!x && typeof x === "object" && "id" in (x as any) && "label" in (x as any)
+    !!x &&
+    typeof x === "object" &&
+    "id" in (x as Record<string, unknown>) &&
+    "label" in (x as Record<string, unknown>)
   );
 }
 
@@ -83,7 +85,7 @@ const SearchDropdown = <T extends Option>({
   const [localSearch, setLocalSearch] = useState("");
 
   const actualSearch = searchValue ?? localSearch;
-  const isObjectMode = useMemo(() => isItemType(options[0]), [options]);
+  const isObjectMode = useMemo(() => isOptionObject(options[0]), [options]);
 
   const { uniqueOptions, byId, byLabel } = useMemo(() => {
     const uniq: T[] = [];
@@ -91,7 +93,7 @@ const SearchDropdown = <T extends Option>({
     const labelMap = new Map<string, T>();
 
     if (isObjectMode) {
-      for (const opt of options as unknown as itemType[]) {
+      for (const opt of options as unknown as OptionObject[]) {
         if (!idMap.has(opt.id)) {
           const typed = opt as unknown as T;
           idMap.set(opt.id, typed);
@@ -117,7 +119,7 @@ const SearchDropdown = <T extends Option>({
     if (isObjectMode) {
       return (byId.get(value) ?? byLabel.get(value) ?? null) as T | null;
     }
-    return uniqueOptions.includes(value as any)
+    return uniqueOptions.includes(value as unknown as T)
       ? (value as unknown as T)
       : null;
   }, [value, isObjectMode, byId, byLabel, uniqueOptions]);
@@ -125,7 +127,7 @@ const SearchDropdown = <T extends Option>({
   const displayLabel = useMemo(() => {
     if (!selected) return "";
     return isObjectMode
-      ? (selected as unknown as itemType).label
+      ? (selected as unknown as OptionObject).label
       : (selected as unknown as string);
   }, [selected, isObjectMode]);
 
@@ -137,7 +139,7 @@ const SearchDropdown = <T extends Option>({
 
     if (isObjectMode) {
       return uniqueOptions.filter((opt) =>
-        ((opt as unknown as itemType).label || "").toLowerCase().includes(q),
+        ((opt as unknown as OptionObject).label || "").toLowerCase().includes(q),
       );
     }
     return uniqueOptions.filter((opt) =>
@@ -150,15 +152,7 @@ const SearchDropdown = <T extends Option>({
     setIsOpen((v) => !v);
   }, [disabled, isLoading]);
 
-  useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      const el = wrapperRef.current;
-      if (!el) return;
-      if (!el.contains(event.target as Node)) setIsOpen(false);
-    };
-    document.addEventListener("pointerdown", onPointerDown, { passive: true });
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, []);
+  useClickOutside(wrapperRef, () => setIsOpen(false));
 
   const setSearchValueSafe = useCallback(
     (next: string) => {
@@ -345,11 +339,11 @@ const SearchDropdown = <T extends Option>({
                   const absoluteIdx = startIndex + localIdx;
 
                   const key = isObjectMode
-                    ? (opt as unknown as itemType).id
+                    ? (opt as unknown as OptionObject).id
                     : `${opt as unknown as string}-${absoluteIdx}`;
 
                   const labelText = isObjectMode
-                    ? (opt as unknown as itemType).label
+                    ? (opt as unknown as OptionObject).label
                     : (opt as unknown as string);
 
                   return (

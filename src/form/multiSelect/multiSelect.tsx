@@ -1,18 +1,16 @@
 import {
   useState,
   useRef,
-  useEffect,
   useMemo,
   useCallback,
   KeyboardEvent,
 } from "react";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { useClickOutside } from "../../hooks";
+import { OptionObject } from "../../types";
 import "./multiSelect.scss";
 
-export interface OptionObject {
-  id: string;
-  label: string;
-}
+export type { OptionObject };
 
 // 🔑 Dynamic Props: options and value must match type T
 type MultiSelectInputProps<T extends string | OptionObject> = {
@@ -46,20 +44,11 @@ function MultiSelectInput<T extends string | OptionObject>({
 
   const isObjectMode = typeof options[0] === "object";
 
-  // ✅ Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-        setFilter("");
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Close dropdown on outside click.
+  useClickOutside(wrapperRef, () => {
+    setIsOpen(false);
+    setFilter("");
+  });
 
   // ✅ Add option
   const handleSelect = useCallback(

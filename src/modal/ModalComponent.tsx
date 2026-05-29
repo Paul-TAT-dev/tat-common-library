@@ -13,7 +13,19 @@ interface ModalComponentProps {
   height?: string;
   width?: string;
   content?: ReactNode;
-  zIndex?: string;
+  zIndex?: number | string;
+  /** Element react-modal aria-hides when open. Defaults to <body>. */
+  appElement?: HTMLElement;
+}
+
+// One-time setup. react-modal warns unless an app element is registered.
+// We guard for SSR and only call it once.
+let appElementInitialized = false;
+function ensureAppElement(appElement?: HTMLElement) {
+  if (appElementInitialized) return;
+  if (typeof document === "undefined") return;
+  Modal.setAppElement(appElement ?? document.body);
+  appElementInitialized = true;
 }
 
 const ModalComponent: FC<ModalComponentProps> = ({
@@ -26,7 +38,10 @@ const ModalComponent: FC<ModalComponentProps> = ({
   width = "90%",
   content,
   zIndex = 2,
+  appElement,
 }) => {
+  ensureAppElement(appElement);
+
   const customStyles = {
     overlay: {
       zIndex,
@@ -47,20 +62,33 @@ const ModalComponent: FC<ModalComponentProps> = ({
       overflow: "hidden",
     },
   };
+
   return (
     <Modal
       isOpen={modalIsOpen}
       onAfterOpen={afterOpenModal}
       contentLabel={title}
+      onRequestClose={closeModal}
+      shouldCloseOnEsc
+      shouldCloseOnOverlayClick
       style={customStyles}
       bodyOpenClassName="tat-modal-open"
     >
       <div className="tat-modal-content">
         <div className="tat-modal-header">
-          {customTitle ? customTitle : <h3 className="tat-modal-title">{title}</h3>}
-          <span className="tat-modal-close">
-            <X onClick={closeModal} />
-          </span>
+          {customTitle ? (
+            customTitle
+          ) : (
+            <h3 className="tat-modal-title">{title}</h3>
+          )}
+          <button
+            type="button"
+            className="tat-modal-close"
+            aria-label="Close dialog"
+            onClick={closeModal}
+          >
+            <X aria-hidden />
+          </button>
         </div>
         <div className="tat-modal-body">{content}</div>
       </div>

@@ -17,6 +17,13 @@ interface TabProps {
   disabled?: boolean;
 }
 
+const STATUS_ICONS = {
+  success: SquareCheckBig,
+  alert: SquareAsterisk,
+  error: SquareX,
+  todo: SquarePen,
+} as const;
+
 const Tab: FC<TabProps> = ({
   value,
   isSelected,
@@ -25,42 +32,31 @@ const Tab: FC<TabProps> = ({
   title,
   disabled = false,
 }) => {
-  const isSelectedClass = isSelected ? "is-active" : "border-0";
-
-  const renderStatusIcon = () => {
-    switch (status) {
-      case "success":
-        return (
-          <SquareCheckBig height={16} width={16} className="flex-shrink-0" />
-        );
-      case "alert":
-        return (
-          <SquareAsterisk height={16} width={16} className="flex-shrink-0" />
-        );
-      case "error":
-        return <SquareX height={16} width={16} className="flex-shrink-0" />;
-      case "todo":
-        return <SquarePen height={16} width={16} className="flex-shrink-0" />;
-      default:
-        return "";
-    }
-  };
+  const StatusIcon = status ? STATUS_ICONS[status] : null;
+  const selectedClass = isSelected ? "is-active" : "border-0";
 
   return (
-    <div
-      className={`tat-tab w-100 btn btn-outline-secondary ${isSelectedClass} px-3 px-md-2 py-2 d-flex ${
+    <button
+      type="button"
+      role="tab"
+      aria-selected={isSelected}
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      title={title}
+      onClick={onClick}
+      className={`tat-tab w-100 btn btn-outline-secondary ${selectedClass} px-3 px-md-2 py-2 d-flex ${
         status ? `tat-tab-${status}` : ""
       } ${disabled ? "is-disabled" : ""}`}
-      onClick={() => !disabled && onClick()}
-      title={title}
     >
       <div className="col-12 d-flex justify-content-between align-items-center">
         <div className="text-start d-flex align-items-center">
-          {renderStatusIcon()}
-          <label className="flex-grow-1 ms-1">{value}</label>
+          {StatusIcon && (
+            <StatusIcon height={16} width={16} className="flex-shrink-0" />
+          )}
+          <span className="flex-grow-1 ms-1">{value}</span>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

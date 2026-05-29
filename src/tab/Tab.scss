@@ -1,16 +1,15 @@
 @use "../styles/variables" as *;
 
 .tat-tab {
-  label {
-    cursor: pointer;
-  }
+  // <button> reset so Tab visually matches the previous <div> implementation.
+  appearance: none;
+  background: transparent;
+  font: inherit;
+  text-align: left;
 
-  &.is-disabled {
+  &.is-disabled,
+  &:disabled {
     cursor: not-allowed;
-
-    label {
-      cursor: not-allowed;
-    }
   }
 
   &.tat-tab-success {

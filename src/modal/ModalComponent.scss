@@ -1,6 +1,12 @@
 @use "../styles/variables" as *;
 
 .tat-modal-close {
+  // <button> reset.
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: inherit;
+
   padding: $tat-space-lg;
   margin: (-$tat-space-lg) (-$tat-space-lg) (-$tat-space-lg) auto;
   cursor: pointer;

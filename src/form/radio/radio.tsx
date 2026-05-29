@@ -1,9 +1,8 @@
-import React from "react";
+import { CSSProperties } from "react";
+import { OptionObject } from "../../types";
+import "./radio.scss";
 
-export interface OptionObject {
-  id: string;
-  label: string;
-}
+export type { OptionObject };
 
 type RadioGroupProps<T extends string | OptionObject> = {
   id: string;
@@ -16,7 +15,8 @@ type RadioGroupProps<T extends string | OptionObject> = {
   required?: boolean;
   disabled?: boolean;
   hide?: boolean;
-  color?: string; // ✅ new prop
+  /** Accent color for the selected radio. Defaults to the library's primary. */
+  color?: string;
   className?: string;
 };
 
@@ -31,7 +31,7 @@ function RadioGroup<T extends string | OptionObject>({
   required = false,
   disabled = false,
   hide = false,
-  color = "#005fcc", // ✅ default color (blue)
+  color,
   className,
 }: RadioGroupProps<T>) {
   if (hide) return null;
@@ -42,23 +42,33 @@ function RadioGroup<T extends string | OptionObject>({
     getLabel
       ? getLabel(opt)
       : isObjectMode
-      ? (opt as OptionObject).label
-      : (opt as string);
+        ? (opt as OptionObject).label
+        : (opt as string);
 
   const resolveKey = (opt: T, idx: number) =>
     getKey
       ? getKey(opt, idx)
       : isObjectMode
-      ? (opt as OptionObject).id
-      : `${opt}-${idx}`;
+        ? (opt as OptionObject).id
+        : `${opt}-${idx}`;
 
   const isSelected = (opt: T) =>
     isObjectMode
       ? (value as OptionObject | null)?.id === (opt as OptionObject).id
       : value === opt;
 
+  // Forward the color prop to CSS via custom property.
+  const wrapperStyle = color
+    ? ({ "--tat-radio-color": color } as CSSProperties)
+    : undefined;
+
   return (
-    <div id={id} className={className}>
+    <div
+      id={id}
+      className={`tat-radio-group ${className ?? ""}`}
+      style={wrapperStyle}
+      role="radiogroup"
+    >
       {options.map((opt, idx) => {
         const key = resolveKey(opt, idx);
         const label = resolveLabel(opt);
@@ -67,27 +77,21 @@ function RadioGroup<T extends string | OptionObject>({
         return (
           <label
             key={key}
-            style={{
-              display: "block",
-              cursor: disabled ? "not-allowed" : "pointer",
-              opacity: disabled ? 0.6 : 1,
-              color: selected ? color : "inherit", // ✅ label text color
-              marginRight: "10px",
-            }}
+            className={`tat-radio-option ${selected ? "is-selected" : ""} ${
+              disabled ? "is-disabled" : ""
+            }`}
           >
             <input
               type="radio"
+              className="tat-radio-input"
               name={name}
               value={key}
               checked={selected}
               onChange={() => onChange(opt)}
               required={required}
               disabled={disabled}
-              style={{
-                accentColor: color, // ✅ modern browsers (Chrome/Edge/Firefox)
-              }}
             />
-            <span style={{ marginLeft: "6px" }}>{label}</span>
+            <span className="tat-radio-label">{label}</span>
           </label>
         );
       })}

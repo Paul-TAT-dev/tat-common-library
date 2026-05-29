@@ -1,0 +1,29 @@
+@use "../../styles/variables" as *;
+
+// The `color` prop is forwarded via a CSS custom property on the wrapper.
+.tat-radio-group {
+  --tat-radio-color: #{$tat-color-primary};
+
+  .tat-radio-option {
+    display: block;
+    cursor: pointer;
+    margin-right: 10px;
+
+    &.is-selected {
+      color: var(--tat-radio-color);
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .tat-radio-input {
+      accent-color: var(--tat-radio-color);
+    }
+
+    .tat-radio-label {
+      margin-left: 6px;
+    }
+  }
+}
