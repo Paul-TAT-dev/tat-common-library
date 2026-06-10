@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, memo, useCallback } from 'react';
+import { ChangeEvent, FC, memo, useCallback } from "react";
 
 interface PaginationProps {
   totalItems: number;
@@ -15,7 +15,7 @@ const Pagination: FC<PaginationProps> = ({
   setItemsPerPage,
   currentPage,
   setCurrentPage,
-  onPageChange
+  onPageChange,
 }) => {
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const visiblePageCount = 5;
@@ -48,14 +48,14 @@ const Pagination: FC<PaginationProps> = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mt-3 gap-3">
+    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
       <span className="text-muted">
         Showing {startItem}-{endItem} of {totalItems}
       </span>
       <div className="d-flex align-items-center gap-2">
         <nav>
           <ul className="pagination mb-0">
-            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => handlePageChange(1)}
@@ -65,10 +65,10 @@ const Pagination: FC<PaginationProps> = ({
               </button>
             </li>
 
-            {getPageRange().map(page => (
+            {getPageRange().map((page) => (
               <li
                 key={page}
-                className={`page-item ${currentPage === page ? 'active' : ''}`}
+                className={`page-item ${currentPage === page ? "active" : ""}`}
               >
                 <button
                   className="page-link"
@@ -80,7 +80,7 @@ const Pagination: FC<PaginationProps> = ({
             ))}
 
             <li
-              className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
             >
               <button
                 className="page-link"
@@ -97,7 +97,7 @@ const Pagination: FC<PaginationProps> = ({
           value={itemsPerPage}
           onChange={handlePageSizeChange}
         >
-          {[10, 25, 50, 100].map(size => (
+          {[10, 25, 50, 100].map((size) => (
             <option key={size} value={size}>
               {size} / page
             </option>
