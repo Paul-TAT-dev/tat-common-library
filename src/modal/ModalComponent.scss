@@ -1,5 +1,61 @@
 @use "../styles/variables" as *;
 
+// Backdrop covering the viewport. zIndex is set via inline style so the
+// consumer can override per-instance.
+.tat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// The dialog box itself. Width/height come from props; we just cap so it
+// doesn't outgrow the viewport.
+.tat-modal-dialog {
+  background: $tat-color-surface;
+  border: 1px solid $tat-color-border;
+  border-radius: $tat-radius-md;
+  box-shadow: $tat-shadow-popup;
+  padding: 20px;
+  overflow: hidden;
+  outline: none; // managed via aria; default focus ring is noisy on the box
+  max-width: 95vw;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Applied to <body> while the modal is open to prevent background scroll.
+.tat-modal-open {
+  overflow: hidden;
+}
+
+.tat-modal-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.tat-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.tat-modal-title {
+  margin: 0;
+}
+
+.tat-modal-body {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
 .tat-modal-close {
   // <button> reset.
   appearance: none;
@@ -10,27 +66,4 @@
   padding: $tat-space-lg;
   margin: (-$tat-space-lg) (-$tat-space-lg) (-$tat-space-lg) auto;
   cursor: pointer;
-}
-
-// Applied to <body> while the modal is open (react-modal bodyOpenClassName).
-.tat-modal-open {
-  overflow: hidden;
-}
-
-.tat-modal-content {
-  height: 100%;
-}
-
-.tat-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.tat-modal-title {
-  margin: 0;
-}
-
-.tat-modal-body {
-  overflow: auto;
 }
