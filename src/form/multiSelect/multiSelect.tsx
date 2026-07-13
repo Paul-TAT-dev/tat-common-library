@@ -1,6 +1,7 @@
 import {
   useState,
   useRef,
+  useEffect,
   useMemo,
   useCallback,
   KeyboardEvent,
@@ -40,6 +41,10 @@ function MultiSelectInput<T extends string | OptionObject>({
 }: MultiSelectInputProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
+  // When there isn't enough room below the field (e.g. it's near the
+  // bottom of the viewport / behind a sticky action bar), open the
+  // options list upward instead of downward.
+  const [dropUp, setDropUp] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const isObjectMode = typeof options[0] === "object";
@@ -49,6 +54,29 @@ function MultiSelectInput<T extends string | OptionObject>({
     setIsOpen(false);
     setFilter("");
   });
+
+  // Decide drop direction whenever the list opens (and keep it in sync
+  // with viewport changes — resize/scroll — while it's open).
+  useEffect(() => {
+    if (!isOpen) return;
+    const updateDropDirection = () => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const estimatedDropdownHeight = 220; // search input + options list
+      setDropUp(
+        spaceBelow < estimatedDropdownHeight &&
+          rect.top > estimatedDropdownHeight,
+      );
+    };
+    updateDropDirection();
+    window.addEventListener("resize", updateDropDirection);
+    window.addEventListener("scroll", updateDropDirection, true);
+    return () => {
+      window.removeEventListener("resize", updateDropDirection);
+      window.removeEventListener("scroll", updateDropDirection, true);
+    };
+  }, [isOpen]);
 
   // ✅ Add option
   const handleSelect = useCallback(
@@ -116,7 +144,7 @@ function MultiSelectInput<T extends string | OptionObject>({
       )}
 
       <div
-        className={`tat-multi-select-control ${isOpen ? "is-open" : ""}`}
+        className={`tat-multi-select-control ${isOpen ? "is-open" : ""} ${isOpen && dropUp ? "drop-up" : ""}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {value.length > 0 && (
@@ -155,7 +183,7 @@ function MultiSelectInput<T extends string | OptionObject>({
       </div>
 
       {isOpen && (
-        <div className="tat-multi-select-menu">
+        <div className={`tat-multi-select-menu ${dropUp ? "drop-up" : ""}`}>
           <div className="tat-multi-select-search-wrapper">
             <input
               type="text"

@@ -29,6 +29,13 @@
       border-color: $tat-color-border-focus;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+
+      &.drop-up {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: $tat-radius-sm;
+        border-bottom-right-radius: $tat-radius-sm;
+      }
     }
 
     .tat-multi-select-placeholder {
@@ -73,6 +80,15 @@
 
   .tat-multi-select-menu {
     @include tat-attached-menu;
+
+    &.drop-up {
+      top: auto;
+      bottom: 100%;
+      border-top: 1px solid $tat-color-border;
+      border-bottom: none;
+      border-radius: $tat-radius-sm $tat-radius-sm 0 0;
+      box-shadow: $tat-shadow-menu;
+    }
 
     .tat-multi-select-search {
       width: 100%;
