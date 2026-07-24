@@ -75,6 +75,7 @@ const CreditCardInput: FC<CreditCardInputProps> = ({
             onFocus={() => setFocus("name")}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder="Name on Credit Card"
+            maxLength={255}
             disabled={disabled}
           />
         </div>

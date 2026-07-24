@@ -15,11 +15,13 @@ interface InputProps {
   label?: string;
   onChange: (value: string) => void; // always string
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
   hide?: boolean;
   className?: string;
   required?: boolean;
   disabled?: boolean;
   format?: "currency" | "phone" | "email" | "text";
+  maxLength?: number;
 }
 
 const Input: FC<InputProps> = ({
@@ -29,11 +31,13 @@ const Input: FC<InputProps> = ({
   label,
   onChange,
   onKeyDown,
+  onBlur,
   hide,
   className,
   required,
   disabled = false,
   format = "text",
+  maxLength,
   ...props
 }) => {
   const [dirty, setDirty] = useState(false);
@@ -51,6 +55,8 @@ const Input: FC<InputProps> = ({
     if (format === "email") {
       setError(validateEmail(value) ? null : "Invalid email format");
     }
+
+    onBlur?.();
   };
 
   // Phone input
@@ -101,7 +107,15 @@ const Input: FC<InputProps> = ({
           prefix="$ "
           placeholder={placeholder}
           className="tat-input"
-          onValueChange={(values) => onChange(values.value)} // raw numeric string
+          onValueChange={(values) => {
+            // maxLength here caps the raw numeric string (values.value —
+            // no "$", no thousand separators), matching what actually gets
+            // submitted, not the longer formatted display string. Reject
+            // the keystroke entirely rather than truncating, so a value
+            // already at the cap can't silently lose its last digit.
+            if (maxLength && values.value.length > maxLength) return;
+            onChange(values.value);
+          }}
           disabled={disabled}
           onBlur={handleBlur}
           decimalScale={2}
@@ -136,6 +150,7 @@ const Input: FC<InputProps> = ({
         onBlur={handleBlur}
         required={required}
         disabled={disabled}
+        maxLength={maxLength}
         {...props}
       />
       {error && <div className="tat-input-error">{error}</div>}
